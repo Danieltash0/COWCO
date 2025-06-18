@@ -1,6 +1,7 @@
 // src/pages/CattleProfile.jsx
 import React from "react";
 import { useParams, Link } from "react-router-dom";
+import "../styles/pages.css";
 
 export default function CattleProfile() {
   const { id } = useParams();

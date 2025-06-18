@@ -1,5 +1,6 @@
 // src/pages/IncomeExpenses.jsx
 import React from "react";
+import "../styles/pages.css";
 
 export default function IncomeExpenses() {
   return (

@@ -1,5 +1,6 @@
 // src/pages/AddCattle.jsx
 import React from "react";
+import "../styles/pages.css";
 
 export default function AddCattle() {
   return (

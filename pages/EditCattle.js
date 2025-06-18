@@ -1,6 +1,7 @@
 // src/pages/EditCattle.jsx
 import React from "react";
 import { useParams } from "react-router-dom";
+import "../styles/pages.css";
 
 export default function EditCattle() {
   const { id } = useParams();

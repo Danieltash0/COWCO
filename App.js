@@ -24,7 +24,8 @@ import Settings from "./pages/Settings";
 import IncomeExpenses from "./pages/IncomeExpenses";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import "./styles/App.css";
+import "./styles/pages.css";
+import "./styles/components.css";
 
 export default function App() {
   return (

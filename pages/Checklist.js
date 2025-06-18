@@ -1,5 +1,6 @@
 // src/pages/Checklist.jsx
 import React from "react";
+import "../styles/pages.css";
 
 export default function Checklist() {
   return (

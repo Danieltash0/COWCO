@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Auth.css';
+import "../styles/pages.css";
 
 export default function Login() {
   const [email, setEmail] = useState('');

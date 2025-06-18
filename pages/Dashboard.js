@@ -2,6 +2,7 @@
 import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import "../styles/pages.css";
 
 export default function Dashboard() {
   const { role } = useParams();
