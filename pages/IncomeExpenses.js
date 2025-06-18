@@ -6,6 +6,7 @@ export default function IncomeExpenses() {
     <div className="income-expenses">
       <h2>Income & Expenses</h2>
       <p>Track income and expense records of the cattle farm.</p>
+      <p>Yes</p>
     </div>
   );
 }
