@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CowCo - Dashboard</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="app-title">CowCo Webapp</h1>
+      <div class="welcome-logout">
+        <span class="welcome">Welcome, <span id="username"></span>!</span>
+        <button id="logout-btn" class="logout-btn">Logout</button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stats-card">
+        <div class="stats-icon">👤</div>
+        <h3 class="stats-title">Total Cattle</h3>
+        <p class="stats-value">120</p>
+        <p class="stats-subtext">+5 this month</p>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">✅</div>
+        <h3 class="stats-title">Healthy Cattle</h3>
+        <p class="stats-value">110</p>
+        <p class="stats-subtext">91% of herd</p>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">⚠️</div>
+        <h3 class="stats-title">Sick Cattle</h3>
+        <p class="stats-value">10</p>
+        <p class="stats-subtext">2 new cases</p>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">💰</div>
+        <h3 class="stats-title">Monthly Income</h3>
+        <p class="stats-value">$12,500</p>
+        <p class="stats-subtext">+15% from last month</p>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">💸</div>
+        <h3 class="stats-title">Monthly Expenses</h3>
+        <p class="stats-value">$3,200</p>
+        <p class="stats-subtext">-5% from last month</p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Schedule Appointment -->
+      <div class="section appointment-section">
+        <h2 class="section-title">Schedule Health Appointment</h2>
+        <p class="section-description">Fill in the details to schedule an appointment.</p>
+        <form id="appointment-form" class="appointment-form">
+          <div class="form-group">
+            <label class="form-label">Cattle ID/Tag</label>
+            <input type="text" id="cattle-id" class="form-input" placeholder="e.g., C123">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Appointment Date</label>
+            <input type="date" id="appointment-date" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Veterinarian</label>
+            <input type="text" id="veterinarian" class="form-input" placeholder="e.g., Dr. Smith">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Symptoms Observed</label>
+            <textarea id="symptoms" class="form-input" placeholder="e.g., Fever, Lameness"></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Schedule</button>
+        </form>
+      </div>
+
+      <!-- Upcoming Appointments -->
+      <div class="section upcoming-section">
+        <h2 class="section-title">Upcoming Health Appointments</h2>
+        <p class="section-description">A list of scheduled health checks for your cattle.</p>
+        <p id="appointments-status" class="appointments-status">No upcoming appointments.</p>
+      </div>
+
+      <!-- Cattle Feed Inventory -->
+      <div class="section inventory-section">
+        <h2 class="section-title">Cattle Feed Inventory</h2>
+        <p class="section-description">Check and manage your feed stock.</p>
+        <div class="inventory-grid">
+          <div class="inventory-item">
+            <p class="item-label">Feed Type</p>
+            <p class="item-value">Alfalfa Hay</p>
+          </div>
+          <div class="inventory-item">
+            <p class="item-label">Quantity</p>
+            <p class="item-value">500 lbs</p>
+          </div>
+          <div class="inventory-item">
+            <p class="item-label">Last Updated</p>
+            <p class="item-value">2023-06-15</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vaccination Schedule -->
+      <div class="section vaccination-section">
+        <h2 class="section-title">Vaccination Schedule</h2>
+        <p class="section-description">Upcoming vaccination dates for your herd.</p>
+        <div class="vaccination-grid">
+          <div class="vaccination-item">
+            <p class="item-label">Next Vaccination</p>
+            <p class="item-value">2023-06-20</p>
+          </div>
+          <div class="vaccination-item">
+            <p class="item-label">Cattle Due</p>
+            <p class="item-value">30 cattle</p>
+          </div>
+          <div class="vaccination-item">
+            <p class="item-label">Vaccine Type</p>
+            <p class="item-value">IBR-BVD</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchUser() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        window.location.href = '/index.html';
+        return;
+      }
+      try {
+        const response = await fetch('/dashboard', {
+          headers: { 'Authorization': token }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('username').textContent = data.username;
+          // Additional data fetching can be added here if backend supports it
+        } else {
+          console.error('Dashboard request failed:', response.status, await response.text());
+          window.location.href = '/index.html';
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        window.location.href = '/index.html';
+      }
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = '/index.html';
+    });
+
+    document.getElementById('appointment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cattleId = document.getElementById('cattle-id').value;
+      const appointmentDate = document.getElementById('appointment-date').value;
+      const veterinarian = document.getElementById('veterinarian').value;
+      const symptoms = document.getElementById('symptoms').value;
+
+      if (cattleId && appointmentDate && veterinarian) {
+        // Placeholder for backend API call to save appointment
+        console.log('Appointment scheduled:', { cattleId, appointmentDate, veterinarian, symptoms });
+        alert('Appointment scheduled successfully!');
+        document.getElementById('appointment-form').reset();
+      } else {
+        alert('Please fill in all required fields.');
+      }
+    });
+
+    fetchUser();
+  </script>
+</body>
+</html>
