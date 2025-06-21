@@ -1,135 +1,69 @@
-CREATE TABLE Users (
-    user_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    password_hash TEXT,
-    role ENUM('manager', 'veterinarian', 'worker', 'admin') NOT NULL,
-    phone VARCHAR(15),
+--Simplified and Normalized Database Schema
+
+-- Users Table
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role ENUM('manager', 'vet', 'worker', 'admin') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Cattle (
-    cattle_id INT PRIMARY KEY AUTO_INCREMENT,
-    tag_number VARCHAR(50) UNIQUE,
-    breed VARCHAR(50),
-    sex ENUM('male', 'female'),
-    date_of_birth DATE,
-    weight_kg DECIMAL(5,2),
-    manager_id INT,
-    qr_code TEXT, -- optional: base64 or file path
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (manager_id) REFERENCES Users(user_id)
+-- Cattle Table
+CREATE TABLE cattle (
+    cattle_id SERIAL PRIMARY KEY,
+    tag_number VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(100),
+    breed VARCHAR(100),
+    age INTEGER,
+    added_by INTEGER REFERENCES users(user_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE HealthRecords (
-    record_id INT PRIMARY KEY AUTO_INCREMENT,
-    cattle_id INT,
-    date DATE,
-    health_status VARCHAR(255),
-    treatment VARCHAR(255),
-    veterinarian_id INT,
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id),
-    FOREIGN KEY (veterinarian_id) REFERENCES Users(user_id)
+-- Health Records Table
+CREATE TABLE health_records (
+    record_id SERIAL PRIMARY KEY,
+    cattle_id INTEGER REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    vet_id INTEGER REFERENCES users(user_id),
+    treatment TEXT,
+    vaccination TEXT,
+    diagnosis TEXT,
+    record_date DATE DEFAULT CURRENT_DATE
 );
 
-CREATE TABLE FeedingRecords (
-    feeding_id INT PRIMARY KEY AUTO_INCREMENT,
-    cattle_id INT,
-    feed_type VARCHAR(100),
-    quantity_kg DECIMAL(5,2),
-    feeding_time DATETIME,
-    worker_id INT,
-    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id),
-    FOREIGN KEY (worker_id) REFERENCES Users(user_id)
-);
-
-CREATE TABLE MilkingRecords (
-    milk_id INT PRIMARY KEY AUTO_INCREMENT,
-    cattle_id INT,
-    amount_litres DECIMAL(5,2),
-    milking_time DATETIME,
-    worker_id INT,
-    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id),
-    FOREIGN KEY (worker_id) REFERENCES Users(user_id)
-);
-
-CREATE TABLE BreedingRecords (
-    breeding_id INT PRIMARY KEY AUTO_INCREMENT,
-    cattle_id INT,
-    breeding_type ENUM('natural', 'artificial'),
-    date_of_breeding DATE,
-    outcome ENUM('pregnant', 'not_pregnant', 'unknown'),
-    delivery_date DATE,
-    calf_count INT,
-    notes TEXT,
-    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id)
-);
-
-CREATE TABLE FinancialRecords (
-    finance_id INT PRIMARY KEY AUTO_INCREMENT,
-    cattle_id INT,
-    type ENUM('income', 'expense'),
-    amount DECIMAL(10,2),
+-- Breeding & Milking & Feeding & Finance can be abstracted as events for simplicity
+CREATE TABLE cattle_events (
+    event_id SERIAL PRIMARY KEY,
+    cattle_id INTEGER REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    event_type ENUM('breeding', 'milking', 'feeding', 'financial'),
     description TEXT,
-    date DATE,
-    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id)
+    amount NUMERIC(10, 2),
+    event_date DATE DEFAULT CURRENT_DATE
 );
 
-CREATE TABLE Tasks (
-    task_id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(100),
-    description TEXT,
-    assigned_to INT,
-    assigned_by INT,
-    related_cattle INT,
-    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
-    due_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (assigned_to) REFERENCES Users(user_id),
-    FOREIGN KEY (assigned_by) REFERENCES Users(user_id),
-    FOREIGN KEY (related_cattle) REFERENCES Cattle(cattle_id)
+-- Tasks Table
+CREATE TABLE tasks (
+    task_id SERIAL PRIMARY KEY,
+    assigned_to INTEGER REFERENCES users(user_id),
+    assigned_by INTEGER REFERENCES users(user_id),
+    task_description TEXT NOT NULL,
+    is_completed BOOLEAN DEFAULT FALSE,
+    due_date DATE
 );
 
-CREATE TABLE Notifications (
-    notification_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    message TEXT,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+-- QR Codes (optional, for storing the image or text mapping)
+CREATE TABLE qr_codes (
+    qr_id SERIAL PRIMARY KEY,
+    cattle_id INTEGER REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    qr_data TEXT NOT NULL,
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE QRScanLogs (
-    scan_id INT PRIMARY KEY AUTO_INCREMENT,
-    scanned_by INT,
-    cattle_id INT,
-    scan_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (scanned_by) REFERENCES Users(user_id),
-    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id)
-);
-
-CREATE TABLE Tasks (
-    task_id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(100),
-    description TEXT,
-    assigned_to INT,
-    assigned_by INT,
-    related_cattle INT,
-    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
-    due_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (assigned_to) REFERENCES Users(user_id),
-    FOREIGN KEY (assigned_by) REFERENCES Users(user_id),
-    FOREIGN KEY (related_cattle) REFERENCES Cattle(cattle_id)
-);
-
-CREATE TABLE ActivityLogs (
-    log_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    activity_type VARCHAR(100),
-    description TEXT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+-- Logs Table
+CREATE TABLE activity_logs (
+    log_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id),
+    action TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
