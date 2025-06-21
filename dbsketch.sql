@@ -101,3 +101,35 @@ CREATE TABLE Notifications (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
+CREATE TABLE QRScanLogs (
+    scan_id INT PRIMARY KEY AUTO_INCREMENT,
+    scanned_by INT,
+    cattle_id INT,
+    scan_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (scanned_by) REFERENCES Users(user_id),
+    FOREIGN KEY (cattle_id) REFERENCES Cattle(cattle_id)
+);
+
+CREATE TABLE Tasks (
+    task_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100),
+    description TEXT,
+    assigned_to INT,
+    assigned_by INT,
+    related_cattle INT,
+    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+    due_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assigned_to) REFERENCES Users(user_id),
+    FOREIGN KEY (assigned_by) REFERENCES Users(user_id),
+    FOREIGN KEY (related_cattle) REFERENCES Cattle(cattle_id)
+);
+
+CREATE TABLE ActivityLogs (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    activity_type VARCHAR(100),
+    description TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
