@@ -1,0 +1,311 @@
+.notification-container {
+  position: fixed;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: var(--z-notification);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  max-width: 400px;
+}
+
+.notification {
+  background-color: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-lg);
+  border-left: 4px solid var(--primary-green);
+  animation: slideInRight var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.notification.success {
+  border-left-color: var(--secondary-green);
+  background-color: #f0f9f0;
+}
+
+.notification.error {
+  border-left-color: var(--red);
+  background-color: #fef2f2;
+}
+
+.notification.warning {
+  border-left-color: var(--orange);
+  background-color: #fffbeb;
+}
+
+.notification.info {
+  border-left-color: var(--primary-green);
+  background-color: #f0f9ff;
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.notification-title {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  color: var(--gray-dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: var(--gray-medium);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.notification-close:hover {
+  background-color: var(--gray-light);
+  color: var(--gray-dark);
+}
+
+.notification-message {
+  color: var(--gray-dark);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.notification-icon {
+  font-size: var(--font-size-lg);
+  margin-right: var(--spacing-xs);
+}
+
+.notification.success .notification-icon {
+  color: var(--secondary-green);
+}
+
+.notification.error .notification-icon {
+  color: var(--red);
+}
+
+.notification.warning .notification-icon {
+  color: var(--orange);
+}
+
+.notification.info .notification-icon {
+  color: var(--primary-green);
+}
+
+.notification-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.notification-actions .btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  min-width: auto;
+}
+
+.notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: var(--primary-green);
+  animation: progress var(--duration-base) linear;
+}
+
+.notification.success .notification-progress {
+  background-color: var(--secondary-green);
+}
+
+.notification.error .notification-progress {
+  background-color: var(--red);
+}
+
+.notification.warning .notification-progress {
+  background-color: var(--orange);
+}
+
+.notification.info .notification-progress {
+  background-color: var(--primary-green);
+}
+
+/* Toast Variant */
+.notification.toast {
+  min-width: 300px;
+  max-width: 400px;
+  padding: var(--spacing-md);
+}
+
+.notification.toast .notification-header {
+  margin-bottom: var(--spacing-xs);
+}
+
+.notification.toast .notification-title {
+  font-size: var(--font-size-sm);
+}
+
+.notification.toast .notification-message {
+  font-size: var(--font-size-xs);
+}
+
+/* Banner Variant */
+.notification.banner {
+  border-left: none;
+  border-radius: 0;
+  margin: 0 var(--spacing-lg);
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.notification.banner.success {
+  background-color: var(--secondary-green);
+  color: var(--white);
+}
+
+.notification.banner.error {
+  background-color: var(--red);
+  color: var(--white);
+}
+
+.notification.banner.warning {
+  background-color: var(--orange);
+  color: var(--white);
+}
+
+.notification.banner.info {
+  background-color: var(--primary-green);
+  color: var(--white);
+}
+
+.notification.banner .notification-title,
+.notification.banner .notification-message {
+  color: var(--white);
+}
+
+.notification.banner .notification-close {
+  color: var(--white);
+}
+
+.notification.banner .notification-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Inline Variant */
+.notification.inline {
+  position: static;
+  margin-bottom: var(--spacing-md);
+  animation: none;
+}
+
+.notification.inline:last-child {
+  margin-bottom: 0;
+}
+
+/* Dismissible Animation */
+.notification.dismissing {
+  animation: slideOutRight var(--transition-base);
+}
+
+/* Grouped Notifications */
+.notification-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.notification-group .notification {
+  animation: slideInRight var(--transition-base);
+}
+
+.notification-group .notification:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.notification-group .notification:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.notification-group .notification:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notification-container {
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    left: var(--spacing-sm);
+    max-width: none;
+  }
+  
+  .notification {
+    max-width: none;
+  }
+  
+  .notification.toast {
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .notification.banner {
+    margin: 0 var(--spacing-sm);
+  }
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Auto-hide Animation */
+.notification.auto-hide {
+  animation: slideInRight var(--transition-base), fadeOut var(--duration-base) var(--duration-base) forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

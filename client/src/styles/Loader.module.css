@@ -1,0 +1,265 @@
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  width: 100%;
+}
+
+.loader {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--gray-light);
+  border-top: 4px solid var(--primary-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader.large {
+  width: 60px;
+  height: 60px;
+  border-width: 6px;
+}
+
+.loader.small {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.loader-text {
+  margin-left: var(--spacing-md);
+  color: var(--gray-medium);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+}
+
+.loader-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+}
+
+.loader-fullscreen .loader {
+  margin-bottom: var(--spacing-lg);
+}
+
+.loader-fullscreen .loader-text {
+  margin-left: 0;
+  font-size: var(--font-size-large);
+}
+
+.loader-dots {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.loader-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--primary-green);
+  animation: bounce 1.4s ease-in-out infinite both;
+}
+
+.loader-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loader-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.loader-dot:nth-child(3) {
+  animation-delay: 0s;
+}
+
+.loader-pulse {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-green);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loader-bar {
+  width: 200px;
+  height: 4px;
+  background-color: var(--gray-light);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.loader-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 30%;
+  background-color: var(--primary-green);
+  animation: slide 1.5s ease-in-out infinite;
+}
+
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-light);
+  border-top: 3px solid var(--primary-green);
+  border-right: 3px solid var(--secondary-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+@keyframes slide {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Loading States for Different Components */
+.loader-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.loader-button .loader {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.loader-card {
+  background-color: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.loader-card .loader {
+  margin: 0 auto var(--spacing-lg);
+}
+
+.loader-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.loader-inline .loader {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--gray-light) 25%, var(--white) 50%, var(--gray-light) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--border-radius-sm);
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.skeleton-text:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-text.medium {
+  width: 80%;
+}
+
+.skeleton-text.long {
+  width: 100%;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 100px;
+}
+
+.skeleton-card {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .loader-bar {
+    width: 150px;
+  }
+  
+  .loader-fullscreen .loader-text {
+    font-size: var(--font-size-base);
+  }
+}
