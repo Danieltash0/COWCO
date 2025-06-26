@@ -413,3 +413,507 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* QR Generator and Scanner Styles */
+.qrGenerator,
+.qrScanner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Selection Section */
+.selection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selection label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.selection select {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.selection select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.selection select:disabled {
+  background: #f8f9fa;
+  color: #6c757d;
+}
+
+/* Cattle Information */
+.cattleInfo {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+.cattleInfo h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.cattleInfo p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.cattleInfo strong {
+  color: #333;
+}
+
+/* QR Section */
+.qrSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.qrDisplay {
+  text-align: center;
+  width: 100%;
+}
+
+.qrDisplay h3 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.qrCode {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 20px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.generateButton,
+.downloadButton,
+.regenerateButton,
+.viewButton,
+.scanAgainButton,
+.scanButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.generateButton {
+  background: #007bff;
+  color: white;
+}
+
+.generateButton:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.downloadButton {
+  background: #28a745;
+  color: white;
+}
+
+.downloadButton:hover {
+  background: #1e7e34;
+  transform: translateY(-1px);
+}
+
+.regenerateButton {
+  background: #6c757d;
+  color: white;
+}
+
+.regenerateButton:hover:not(:disabled) {
+  background: #545b62;
+  transform: translateY(-1px);
+}
+
+.viewButton {
+  background: #007bff;
+  color: white;
+}
+
+.viewButton:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.scanAgainButton {
+  background: #17a2b8;
+  color: white;
+}
+
+.scanAgainButton:hover {
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+.scanButton {
+  background: #007bff;
+  color: white;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.scanButton:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.generateButton:disabled,
+.regenerateButton:disabled,
+.scanButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Generate Section */
+.generateSection {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.generateSection p {
+  margin: 0 0 20px 0;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Placeholder */
+.placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Scanner Styles */
+.scannerContainer {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.manualInput {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.manualInput h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.manualInput p {
+  margin: 0 0 16px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.inputForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qrInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s ease;
+}
+
+.qrInput:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.qrInput:disabled {
+  background: #f8f9fa;
+  color: #6c757d;
+}
+
+.scannerInfo {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #17a2b8;
+}
+
+.scannerInfo h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.scannerInfo p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.codeExample {
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Scan Result */
+.scanResult {
+  text-align: center;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px solid #28a745;
+}
+
+.scanResult h3 {
+  margin: 0 0 16px 0;
+  color: #28a745;
+  font-size: 20px;
+}
+
+/* Error and Processing */
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #f5c6cb;
+  text-align: center;
+}
+
+.error p {
+  margin: 0 0 12px 0;
+}
+
+.error button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.error button:hover {
+  background: #c82333;
+}
+
+.processing {
+  text-align: center;
+  padding: 40px 20px;
+  color: #007bff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Page Container Styles */
+.pageContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.pageHeader h1 {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pageHeader p {
+  margin: 0;
+  font-size: 18px;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .qrGenerator,
+  .qrScanner {
+    margin: 10px;
+    padding: 16px;
+  }
+
+  .header h2 {
+    font-size: 20px;
+  }
+
+  .qrCode {
+    padding: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .generateButton,
+  .downloadButton,
+  .regenerateButton,
+  .viewButton,
+  .scanAgainButton {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .manualInput {
+    padding: 16px;
+  }
+
+  .scannerInfo {
+    padding: 16px;
+  }
+
+  .codeExample {
+    font-size: 11px;
+    padding: 12px;
+  }
+
+  .pageHeader h1 {
+    font-size: 24px;
+  }
+
+  .pageHeader p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .qrCode {
+    padding: 12px;
+  }
+
+  .manualInput {
+    padding: 12px;
+  }
+
+  .scannerInfo {
+    padding: 12px;
+  }
+
+  .codeExample {
+    font-size: 10px;
+    padding: 8px;
+  }
+
+  .pageHeader h1 {
+    font-size: 20px;
+  }
+
+  .pageHeader p {
+    font-size: 14px;
+  }
+}

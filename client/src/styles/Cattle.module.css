@@ -1,7 +1,7 @@
 .cattle-container {
   padding: var(--spacing-lg);
-  background-color: var(--gray-light);
-  min-height: calc(100vh - 60px);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e8 50%, #f0f8f0 100%);
+  min-height: calc(100vh - 120px);
 }
 
 .page-header {
@@ -14,10 +14,14 @@
 }
 
 .page-header h2 {
-  color: var(--primary-green);
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: var(--font-size-3xl);
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .cattle-summary {
@@ -28,18 +32,52 @@
 }
 
 .summary-card {
-  background-color: var(--white);
+  background: linear-gradient(135deg, var(--white) 0%, #f8f9fa 100%);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   text-align: center;
   transition: all var(--transition-base);
-  border-left: 4px solid var(--primary-green);
+  border: 1px solid rgba(74, 124, 89, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(74, 124, 89, 0.03), transparent);
+  transition: left 0.6s ease;
+}
+
+.summary-card:hover::before {
+  left: 100%;
+}
+
+.summary-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+}
+
+.summary-card:hover::after {
+  transform: scaleX(1);
 }
 
 .summary-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(45, 90, 39, 0.15);
+  border-color: var(--secondary-green);
 }
 
 .summary-card h3 {
@@ -54,20 +92,33 @@
 .summary-count {
   font-size: var(--font-size-3xl);
   font-weight: 700;
-  color: var(--primary-green);
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: var(--spacing-xs);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .summary-count.green {
-  color: var(--secondary-green);
+  background: linear-gradient(135deg, #28a745, #20c997);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .summary-count.red {
-  color: var(--red);
+  background: linear-gradient(135deg, var(--red), #c82333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .summary-count.orange {
-  color: var(--orange);
+  background: linear-gradient(135deg, var(--orange), #e55a00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .cattle-filters {

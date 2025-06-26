@@ -11,5 +11,6 @@ app.use('/api/cattle', require('./routes/cattleRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/vet', require('./routes/vetRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/qr', require('./routes/qrRoutes'));
 
 module.exports = app;

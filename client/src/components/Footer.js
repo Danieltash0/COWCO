@@ -6,12 +6,12 @@ const Footer = () => (
     <div className="footer-content">
       <div className="footer-contact">
         Contact: 
-        <a href="mailto:support@cowco.com">support@cowco.com</a> |
-        <a href="tel:+1234567890">+1 (234) 567-890</a> |
+        <a href="mailto:cowco@gmail.com">cowco@gmail.com</a> |
+        <a href="tel:+254711566969">+254 711 566 969 </a> |
         <a href="https://cowco.com" target="_blank" rel="noopener noreferrer">www.cowco.com</a>
       </div>
       <div className="footer-copyright">
-        &copy; {new Date().getFullYear()} CowCo. All rights reserved.
+        &copy; {new Date().getFullYear()} CowCo. Strong Herds, Strong Future.
       </div>
     </div>
   </footer>
