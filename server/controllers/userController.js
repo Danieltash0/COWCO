@@ -1,10 +1,9 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
 
 exports.signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-    const password_hash = await bcrypt.hash(password, 10);
+    const password_hash = password; // Store password as plain text
     const userId = await User.createUser({ name, email, password_hash, role });
     res.status(201).json({ userId });
   } catch (err) {

@@ -14,32 +14,41 @@ const Logs = () => {
     }
   };
 
-  const getLogLevelColor = (level) => {
-    switch (level) {
-      case 'error': return 'red';
-      case 'warn': return 'orange';
-      case 'info': return 'blue';
-      case 'debug': return 'gray';
-      default: return 'gray';
-    }
+  const getLogLevelColor = (action) => {
+    // Determine level based on action type
+    if (action?.includes('error') || action?.includes('fail')) return 'red';
+    if (action?.includes('warn') || action?.includes('warning')) return 'orange';
+    if (action?.includes('login') || action?.includes('logout')) return 'blue';
+    return 'gray';
   };
 
-  const getLogLevelIcon = (level) => {
-    switch (level) {
-      case 'error': return '❌';
-      case 'warn': return '⚠️';
-      case 'info': return 'ℹ️';
-      case 'debug': return '🔍';
-      default: return '📝';
-    }
+  const getLogLevelIcon = (action) => {
+    // Determine icon based on action type
+    if (action?.includes('error') || action?.includes('fail')) return '❌';
+    if (action?.includes('warn') || action?.includes('warning')) return '⚠️';
+    if (action?.includes('login') || action?.includes('logout')) return 'ℹ️';
+    if (action?.includes('add') || action?.includes('create')) return '➕';
+    if (action?.includes('update') || action?.includes('edit')) return '✏️';
+    if (action?.includes('delete') || action?.includes('remove')) return '🗑️';
+    if (action?.includes('complete') || action?.includes('finish')) return '✅';
+    return '📝';
+  };
+
+  const getLogLevel = (action) => {
+    // Determine level based on action type
+    if (action?.includes('error') || action?.includes('fail')) return 'ERROR';
+    if (action?.includes('warn') || action?.includes('warning')) return 'WARN';
+    if (action?.includes('login') || action?.includes('logout')) return 'INFO';
+    return 'INFO';
   };
 
   const filteredLogs = logs.filter(log => {
-    const matchesFilter = filter === 'all' || log.level === filter;
+    const logLevel = getLogLevel(log.action);
+    const matchesFilter = filter === 'all' || logLevel.toLowerCase() === filter;
     const matchesSearch = searchTerm === '' || 
-      log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.action.toLowerCase().includes(searchTerm.toLowerCase());
+      (log.description?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (log.userName?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (log.action?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
     
     return matchesFilter && matchesSearch;
   });
@@ -64,19 +73,19 @@ const Logs = () => {
         <div className="summary-card">
           <h3>Errors</h3>
           <div className="summary-count red">
-            {logs.filter(log => log.level === 'error').length}
+            {logs.filter(log => getLogLevel(log.action) === 'ERROR').length}
           </div>
         </div>
         <div className="summary-card">
           <h3>Warnings</h3>
           <div className="summary-count orange">
-            {logs.filter(log => log.level === 'warn').length}
+            {logs.filter(log => getLogLevel(log.action) === 'WARN').length}
           </div>
         </div>
         <div className="summary-card">
           <h3>Info</h3>
           <div className="summary-count blue">
-            {logs.filter(log => log.level === 'info').length}
+            {logs.filter(log => getLogLevel(log.action) === 'INFO').length}
           </div>
         </div>
       </div>
@@ -89,7 +98,6 @@ const Logs = () => {
             <option value="error">Errors</option>
             <option value="warn">Warnings</option>
             <option value="info">Info</option>
-            <option value="debug">Debug</option>
           </select>
         </div>
         <div className="filter-group">
@@ -125,17 +133,17 @@ const Logs = () => {
               </tr>
             ) : (
               filteredLogs.map(log => (
-                <tr key={log.id} className={`log-row ${log.level}`}>
+                <tr key={log.id} className={`log-row ${getLogLevel(log.action).toLowerCase()}`}>
                   <td>{new Date(log.timestamp).toLocaleString()}</td>
                   <td>
-                    <span className={`log-level ${getLogLevelColor(log.level)}`}>
-                      {getLogLevelIcon(log.level)} {log.level.toUpperCase()}
+                    <span className={`log-level ${getLogLevelColor(log.action)}`}>
+                      {getLogLevelIcon(log.action)} {getLogLevel(log.action)}
                     </span>
                   </td>
-                  <td>{log.user}</td>
-                  <td>{log.action}</td>
-                  <td className="log-message">{log.message}</td>
-                  <td>{log.ipAddress}</td>
+                  <td>{log.userName || 'Unknown'}</td>
+                  <td>{log.action || 'Unknown'}</td>
+                  <td className="log-message">{log.description || 'No description'}</td>
+                  <td>{log.ipAddress || 'N/A'}</td>
                 </tr>
               ))
             )}
@@ -167,7 +175,6 @@ const Logs = () => {
               <li><strong>Error:</strong> System errors and critical issues</li>
               <li><strong>Warning:</strong> Potential issues and warnings</li>
               <li><strong>Info:</strong> General information and user actions</li>
-              <li><strong>Debug:</strong> Detailed debugging information</li>
             </ul>
           </div>
           <div className="info-item">
