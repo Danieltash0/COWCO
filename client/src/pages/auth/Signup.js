@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from '../../styles/Auth.module.css';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.png.png';
 
 const roles = [
   'Farm Manager',

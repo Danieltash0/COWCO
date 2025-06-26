@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import styles from '../styles/Navbar.module.css';
+import logo from '../assets/logo.png.png';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -34,7 +35,10 @@ const Navbar = () => {
         <div className={styles.navTopRow}>
           <div className={styles.navBrand}>
             <Link to={getDashboardLink()}>
-              <h2>🐄 CowCo</h2>
+              <div className={styles.brandContent}>
+                <img src={logo} alt="CowCo Logo" className={styles.brandLogo} />
+                <h2>CowCo</h2>
+              </div>
             </Link>
           </div>
 

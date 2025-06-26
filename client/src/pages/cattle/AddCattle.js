@@ -9,10 +9,7 @@ const AddCattle = () => {
   const [form, setForm] = useState({
     name: '',
     breed: '',
-    age: '',
-    weight: '',
     health: 'Good',
-    location: '',
     gender: 'Female',
     dateOfBirth: '',
     notes: ''
@@ -71,32 +68,6 @@ const AddCattle = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Age (years) *</label>
-            <input
-              type="number"
-              name="age"
-              value={form.age}
-              onChange={handleChange}
-              min="0"
-              max="20"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Weight (kg) *</label>
-            <input
-              type="number"
-              name="weight"
-              value={form.weight}
-              onChange={handleChange}
-              min="0"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
             <label>Health Status *</label>
             <select name="health" value={form.health} onChange={handleChange} required>
               <option value="Excellent">Excellent</option>
@@ -114,27 +85,14 @@ const AddCattle = () => {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Location *</label>
-            <input
-              type="text"
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-              placeholder="e.g., Barn A - Stall 1"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Date of Birth</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={form.dateOfBirth}
-              onChange={handleChange}
-            />
-          </div>
+        <div className="form-group">
+          <label>Date of Birth</label>
+          <input
+            type="date"
+            name="dateOfBirth"
+            value={form.dateOfBirth}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group">

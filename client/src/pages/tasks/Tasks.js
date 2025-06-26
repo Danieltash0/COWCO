@@ -1,53 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTasks } from '../../api/useTasks';
 import { useAuth } from '../../context/AuthContext';
-import Modal from '../../components/Modal';
 import Loader from '../../components/Loader';
 
 const Tasks = () => {
-  const { tasks, loading, error, addTask, completeTask, deleteTask } = useTasks();
+  const { tasks, loading, error, completeTask, deleteTask } = useTasks();
   const { user } = useAuth();
-  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
   const [filter, setFilter] = useState('all');
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    assignedTo: '',
-    priority: 'medium',
-    dueDate: '',
-    category: 'general'
-  });
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    
-    const taskData = {
-      ...form,
-      assignedBy: user.name,
-      status: 'pending'
-    };
-
-    const result = await addTask(taskData);
-    setSubmitting(false);
-    
-    if (result.success) {
-      setShowModal(false);
-      setForm({
-        title: '',
-        description: '',
-        assignedTo: '',
-        priority: 'medium',
-        dueDate: '',
-        category: 'general'
-      });
-    }
-  };
 
   const handleComplete = async (taskId) => {
     await completeTask(taskId);
@@ -91,7 +52,7 @@ const Tasks = () => {
       <div className="content-header">
         <h1 className="content-title">Task Management</h1>
         <div className="content-actions">
-          <button onClick={() => setShowModal(true)} className="btn btn-primary">
+          <button onClick={() => navigate('/tasks/add')} className="btn btn-primary">
             Add New Task
           </button>
         </div>
@@ -145,7 +106,7 @@ const Tasks = () => {
           <div className="content-container">
             <div className="text-center">
               <p className="text-gray">No tasks found.</p>
-              <button onClick={() => setShowModal(true)} className="btn btn-primary mt-3">
+              <button onClick={() => navigate('/tasks/add')} className="btn btn-primary mt-3">
                 Create Your First Task
               </button>
             </div>
@@ -227,101 +188,6 @@ const Tasks = () => {
           })
         )}
       </div>
-
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Add New Task">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="title">Task Title</label>
-            <input
-              id="title"
-              type="text"
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows="3"
-              required
-            />
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="assignedTo">Assign To</label>
-              <input
-                id="assignedTo"
-                type="text"
-                name="assignedTo"
-                value={form.assignedTo}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="priority">Priority</label>
-              <select
-                id="priority"
-                name="priority"
-                value={form.priority}
-                onChange={handleChange}
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="dueDate">Due Date</label>
-              <input
-                id="dueDate"
-                type="date"
-                name="dueDate"
-                value={form.dueDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-              >
-                <option value="general">General</option>
-                <option value="feeding">Feeding</option>
-                <option value="cleaning">Cleaning</option>
-                <option value="health">Health</option>
-                <option value="maintenance">Maintenance</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="form-actions">
-            <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? 'Adding...' : 'Add Task'}
-            </button>
-          </div>
-        </form>
-      </Modal>
     </div>
   );
 };

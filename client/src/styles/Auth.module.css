@@ -86,7 +86,6 @@
   width: 80px;
   height: 80px;
   border-radius: var(--border-radius-lg);
-  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,7 +94,6 @@
   transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
-  padding: var(--spacing-sm);
 }
 
 .auth-logo img {

@@ -30,6 +30,7 @@ import HealthAlerts from './pages/vet/HealthAlerts';
 
 // Task Pages
 import Tasks from './pages/tasks/Tasks';
+import AddTask from './pages/tasks/AddTask';
 import Checklist from './pages/tasks/Checklist';
 
 // Report Pages
@@ -141,6 +142,11 @@ function App() {
             <Route path="/tasks" element={
               <ProtectedRoute allowedRoles={['Farm Manager', 'Worker', 'Admin']}>
                 <Tasks />
+              </ProtectedRoute>
+            } />
+            <Route path="/tasks/add" element={
+              <ProtectedRoute allowedRoles={['Farm Manager', 'Worker', 'Admin']}>
+                <AddTask />
               </ProtectedRoute>
             } />
             <Route path="/tasks/checklist" element={

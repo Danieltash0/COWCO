@@ -31,6 +31,30 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.brandContent {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.brandContent:hover {
+  transform: scale(1.05);
+}
+
+.brandLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: all 0.2s ease;
+}
+
+.brandContent:hover .brandLogo {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
 .navBrand a {
   text-decoration: none;
 }
@@ -124,6 +148,15 @@
     padding: 1rem 0;
   }
 
+  .brandContent {
+    gap: 0.6rem;
+  }
+
+  .brandLogo {
+    width: 35px;
+    height: 35px;
+  }
+
   .navBrand h2 {
     font-size: 1.5rem;
   }
@@ -148,6 +181,15 @@
 @media (max-width: 480px) {
   .navTopRow {
     padding: 0.8rem 0;
+  }
+
+  .brandContent {
+    gap: 0.5rem;
+  }
+
+  .brandLogo {
+    width: 30px;
+    height: 30px;
   }
 
   .navBrand h2 {
