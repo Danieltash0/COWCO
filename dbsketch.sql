@@ -67,6 +67,17 @@ CREATE TABLE qr_codes (
     FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE
 );
 
+-- Reports Table
+CREATE TABLE reports (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    type ENUM('production', 'health', 'financial', 'general') NOT NULL,
+    generated_by INT,
+    data JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (generated_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
 -- Activity Logs Table
 CREATE TABLE activity_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,

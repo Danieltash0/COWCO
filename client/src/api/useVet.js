@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiRequest, getAuthHeaders } from './config';
 
 // Mock health records data
 const mockHealthRecords = [
@@ -93,32 +94,38 @@ export const useVet = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setHealthRecords(mockHealthRecords);
-        setHealthAlerts(mockHealthAlerts);
-      } catch (err) {
-        setError('Failed to fetch veterinary data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [recordsResponse, alertsResponse] = await Promise.all([
+        apiRequest('/health-records', { headers: getAuthHeaders() }),
+        apiRequest('/health-alerts', { headers: getAuthHeaders() })
+      ]);
+      
+      setHealthRecords(recordsResponse);
+      setHealthAlerts(alertsResponse);
+    } catch (err) {
+      setError('Failed to fetch veterinary data');
+      console.error('Error fetching vet data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const addHealthRecord = async (recordData) => {
     try {
-      const newRecord = {
-        id: Date.now(),
-        ...recordData,
-        date: recordData.date || new Date().toISOString().split('T')[0],
-        status: 'completed'
-      };
+      const response = await apiRequest('/health-records', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(recordData),
+      });
       
-      setHealthRecords(prev => [...prev, newRecord]);
-      return { success: true, record: newRecord };
+      // Refresh the data
+      await fetchData();
+      return { success: true, record_id: response.record_id };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -126,9 +133,14 @@ export const useVet = () => {
 
   const updateHealthRecord = async (id, recordData) => {
     try {
-      setHealthRecords(prev => prev.map(record => 
-        record.id === id ? { ...record, ...recordData } : record
-      ));
+      await apiRequest(`/health-records/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(recordData),
+      });
+      
+      // Refresh the data
+      await fetchData();
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -137,7 +149,13 @@ export const useVet = () => {
 
   const deleteHealthRecord = async (id) => {
     try {
-      setHealthRecords(prev => prev.filter(record => record.id !== id));
+      await apiRequest(`/health-records/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      
+      // Refresh the data
+      await fetchData();
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -146,14 +164,15 @@ export const useVet = () => {
 
   const addHealthAlert = async (alertData) => {
     try {
-      const newAlert = {
-        id: Date.now(),
-        ...alertData,
-        status: 'pending'
-      };
+      const response = await apiRequest('/health-alerts', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(alertData),
+      });
       
-      setHealthAlerts(prev => [...prev, newAlert]);
-      return { success: true, alert: newAlert };
+      // Refresh the data
+      await fetchData();
+      return { success: true, alert_id: response.alert_id };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -161,9 +180,14 @@ export const useVet = () => {
 
   const updateHealthAlert = async (id, alertData) => {
     try {
-      setHealthAlerts(prev => prev.map(alert => 
-        alert.id === id ? { ...alert, ...alertData } : alert
-      ));
+      await apiRequest(`/health-alerts/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(alertData),
+      });
+      
+      // Refresh the data
+      await fetchData();
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -172,7 +196,13 @@ export const useVet = () => {
 
   const deleteHealthAlert = async (id) => {
     try {
-      setHealthAlerts(prev => prev.filter(alert => alert.id !== id));
+      await apiRequest(`/health-alerts/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      
+      // Refresh the data
+      await fetchData();
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -180,7 +210,7 @@ export const useVet = () => {
   };
 
   const getHealthRecordsByCattle = (cattleId) => {
-    return healthRecords.filter(record => record.cattleId === cattleId);
+    return healthRecords.filter(record => record.cattle_id === cattleId);
   };
 
   const getHealthRecordsByType = (type) => {
@@ -190,7 +220,7 @@ export const useVet = () => {
   const getUpcomingAlerts = () => {
     const today = new Date();
     return healthAlerts.filter(alert => {
-      const dueDate = new Date(alert.dueDate);
+      const dueDate = new Date(alert.due_date);
       return dueDate >= today && alert.status === 'pending';
     });
   };
@@ -208,6 +238,7 @@ export const useVet = () => {
     deleteHealthAlert,
     getHealthRecordsByCattle,
     getHealthRecordsByType,
-    getUpcomingAlerts
+    getUpcomingAlerts,
+    refreshData: fetchData
   };
 };
