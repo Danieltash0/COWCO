@@ -1,8 +1,8 @@
---Simplified and Normalized Database Schema
+--Simplified and Normalized Database Schema for MySQL
 
 -- Users Table
 CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
@@ -12,58 +12,66 @@ CREATE TABLE users (
 
 -- Cattle Table
 CREATE TABLE cattle (
-    cattle_id SERIAL PRIMARY KEY,
+    cattle_id INT AUTO_INCREMENT PRIMARY KEY,
     tag_number VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(100),
     breed VARCHAR(100),
-    age INTEGER,
-    added_by INTEGER REFERENCES users(user_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    age INT,
+    added_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (added_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 -- Health Records Table
 CREATE TABLE health_records (
-    record_id SERIAL PRIMARY KEY,
-    cattle_id INTEGER REFERENCES cattle(cattle_id) ON DELETE CASCADE,
-    vet_id INTEGER REFERENCES users(user_id),
+    record_id INT AUTO_INCREMENT PRIMARY KEY,
+    cattle_id INT,
+    vet_id INT,
     treatment TEXT,
     vaccination TEXT,
     diagnosis TEXT,
-    record_date DATE DEFAULT CURRENT_DATE
+    record_date DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    FOREIGN KEY (vet_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
--- Breeding & Milking & Feeding & Finance can be abstracted as events for simplicity
+-- Cattle Events Table (for breeding, milking, feeding, financial)
 CREATE TABLE cattle_events (
-    event_id SERIAL PRIMARY KEY,
-    cattle_id INTEGER REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    cattle_id INT,
     event_type ENUM('breeding', 'milking', 'feeding', 'financial'),
     description TEXT,
-    amount NUMERIC(10, 2),
-    event_date DATE DEFAULT CURRENT_DATE
+    amount DECIMAL(10, 2),
+    event_date DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE
 );
 
 -- Tasks Table
 CREATE TABLE tasks (
-    task_id SERIAL PRIMARY KEY,
-    assigned_to INTEGER REFERENCES users(user_id),
-    assigned_by INTEGER REFERENCES users(user_id),
+    task_id INT AUTO_INCREMENT PRIMARY KEY,
+    assigned_to INT,
+    assigned_by INT,
     task_description TEXT NOT NULL,
     is_completed BOOLEAN DEFAULT FALSE,
-    due_date DATE
+    due_date DATE,
+    FOREIGN KEY (assigned_to) REFERENCES users(user_id) ON DELETE SET NULL,
+    FOREIGN KEY (assigned_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
--- QR Codes (optional, for storing the image or text mapping)
+-- QR Codes Table
 CREATE TABLE qr_codes (
-    qr_id SERIAL PRIMARY KEY,
-    cattle_id INTEGER REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    qr_id INT AUTO_INCREMENT PRIMARY KEY,
+    cattle_id INT,
     qr_data TEXT NOT NULL,
-    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE
 );
 
--- Logs Table
+-- Activity Logs Table
 CREATE TABLE activity_logs (
-    log_id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(user_id),
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
     action TEXT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
