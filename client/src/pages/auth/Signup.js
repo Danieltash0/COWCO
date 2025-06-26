@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import '../../styles/Auth.module.css';
+import styles from '../../styles/Auth.module.css';
+import logo from '../../assets/logo.png';
 
 const roles = [
   'Farm Manager',
@@ -35,56 +36,74 @@ const Signup = () => {
   };
 
   return (
-    <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
-        {error && <div className="auth-error">{error}</div>}
-        <div className="form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            autoFocus
-          />
+    <div className={styles['auth-container']}>
+      <h1 className={styles['welcome-heading']}>Welcome to CowCo</h1>
+      <div className={styles['auth-card']}>
+        <div className={styles['auth-header']}>
+          <div className={styles['auth-logo']}>
+            <img src={logo} alt="CowCo Logo" />
+          </div>
+          <h2 className={styles['auth-title']}>Sign Up</h2>
+          <p className={styles['auth-subtitle']}>Join our cattle management platform</p>
         </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Role</label>
-          <select name="role" value={form.role} onChange={handleChange} required>
-            {roles.map(role => (
-              <option key={role} value={role}>{role}</option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? 'Signing up...' : 'Sign Up'}
-        </button>
-        <div className="auth-links">
-          <a className="auth-link" onClick={() => navigate('/login')} tabIndex={0} role="button">Already have an account? Login</a>
-        </div>
-      </form>
+        <form className={styles['auth-form']} onSubmit={handleSubmit}>
+          {error && <div className={styles['auth-error']}>{error}</div>}
+          <div className="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              autoFocus
+            />
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Role</label>
+            <select name="role" value={form.role} onChange={handleChange} required>
+              {roles.map(role => (
+                <option key={role} value={role}>{role}</option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className={styles['auth-submit']} disabled={loading}>
+            {loading ? (
+              <>
+                <span className={styles['auth-loading']}></span>
+                Signing up...
+              </>
+            ) : (
+              'Sign Up'
+            )}
+          </button>
+          <div className={styles['auth-links']}>
+            <a className={styles['auth-link']} onClick={() => navigate('/login')} tabIndex={0} role="button">
+              Already have an account? Login
+            </a>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

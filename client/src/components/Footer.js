@@ -11,7 +11,7 @@ const Footer = () => (
         <a href="https://cowco.com" target="_blank" rel="noopener noreferrer">www.cowco.com</a>
       </div>
       <div className="footer-copyright">
-        &copy; {new Date().getFullYear()} CowCo. Strong Herds, Strong Future.
+         {new Date().getFullYear()} CowCo. Strong Herds, Strong Future.
       </div>
     </div>
   </footer>
