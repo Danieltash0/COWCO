@@ -3,6 +3,14 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+// Role mapping from database to frontend
+const roleMapping = {
+  'manager': 'Farm Manager',
+  'vet': 'Veterinarian',
+  'worker': 'Worker',
+  'admin': 'Admin'
+};
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -25,11 +33,15 @@ exports.login = async (req, res) => {
       { expiresIn: '24h' }
     );
     
-    // Remove password from response
+    // Remove password from response and map role to frontend format
     const { password_hash, ...userWithoutPassword } = user;
+    const userForFrontend = {
+      ...userWithoutPassword,
+      role: roleMapping[user.role] || user.role
+    };
     
     res.json({
-      user: userWithoutPassword,
+      user: userForFrontend,
       token
     });
   } catch (err) {

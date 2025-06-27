@@ -1,104 +1,123 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from '../styles/QR.module.css';
 
 const QRScannerComponent = ({ onScan, onError }) => {
+  const [qrInput, setQrInput] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Mock QR scanner functionality
-    // In a real app, you would use a library like react-qr-reader
-    const startScanning = () => {
-      setIsScanning(true);
-      setError(null);
-      
-      // Simulate scanning process
-      setTimeout(() => {
-        // Mock successful scan
-        const mockQRData = {
-          id: 'cattle_123',
-          type: 'cattle',
-          data: {
-            cattleId: 'CTL-2024-001',
-            name: 'Bessie',
-            breed: 'Holstein',
-            age: '3 years'
-          }
-        };
-        
-        onScan(mockQRData);
-        setIsScanning(false);
-      }, 2000);
-    };
-
-    if (isScanning) {
-      startScanning();
+  const handleManualInput = (e) => {
+    e.preventDefault();
+    if (!qrInput.trim()) {
+      setError('Please enter QR code data');
+      return;
     }
-  }, [isScanning, onScan]);
+
+    try {
+      // Try to parse as JSON, if it fails, treat as plain text
+      let qrData;
+      try {
+        qrData = JSON.parse(qrInput);
+      } catch {
+        qrData = {
+          id: `manual_${Date.now()}`,
+          type: 'text',
+          content: qrInput,
+          timestamp: new Date().toISOString()
+        };
+      }
+
+      onScan(qrData);
+      setQrInput('');
+      setError(null);
+    } catch (err) {
+      setError('Invalid QR code data');
+      onError && onError(err);
+    }
+  };
 
   const handleStartScan = () => {
     setIsScanning(true);
+    setError(null);
+    // In a real app, this would start camera scanning
+    // For now, we'll just show the manual input form
   };
 
   const handleStopScan = () => {
     setIsScanning(false);
+    setError(null);
   };
 
   return (
     <div className={styles.qrScanner}>
-      <div className={styles.qrScannerContainer}>
-        {isScanning ? (
-          <>
-            <div className={styles.qrScannerVideo}>
-              <div className={styles.qrScannerOverlay}>
-                <div className={styles.qrScannerFrame}></div>
-              </div>
-            </div>
-            <div className={styles.qrScannerStatus}>
-              Scanning for QR code...
-            </div>
-          </>
-        ) : (
-          <div className={styles.qrScannerVideo}>
-            <div className={styles.qrLoading}>
-              Click "Start Scan" to begin
-            </div>
-          </div>
-        )}
-      </div>
-      
-      <div className={styles.qrActions}>
-        {!isScanning ? (
-          <button 
-            className="btn btn-primary" 
-            onClick={handleStartScan}
-          >
-            Start Scan
-          </button>
-        ) : (
-          <button 
-            className="btn btn-secondary" 
-            onClick={handleStopScan}
-          >
-            Stop Scan
-          </button>
-        )}
-      </div>
-
-      {error && (
-        <div className={styles.qrError}>
-          <div className={styles.qrErrorIcon}>⚠️</div>
-          <div className={styles.qrErrorMessage}>{error}</div>
-          <div className={styles.qrErrorActions}>
+      <div className={styles.scannerHeader}>
+        <h3>QR Code Scanner</h3>
+        <div className={styles.scannerControls}>
+          {!isScanning ? (
             <button 
               className="btn btn-primary" 
-              onClick={() => setError(null)}
+              onClick={handleStartScan}
             >
-              Try Again
+              Start Scanning
             </button>
+          ) : (
+            <button 
+              className="btn btn-secondary" 
+              onClick={handleStopScan}
+            >
+              Stop Scanning
+            </button>
+          )}
+        </div>
+      </div>
+
+      {isScanning && (
+        <div className={styles.scannerContent}>
+          <div className={styles.cameraPlaceholder}>
+            <div className={styles.cameraIcon}>📷</div>
+            <p>Camera scanning would be active here</p>
+            <p className={styles.scannerNote}>
+              Note: Due to browser limitations, please use manual input below
+            </p>
+          </div>
+
+          <div className={styles.manualInput}>
+            <h4>Manual QR Code Input</h4>
+            <form onSubmit={handleManualInput}>
+              <textarea
+                value={qrInput}
+                onChange={(e) => setQrInput(e.target.value)}
+                placeholder="Enter QR code data or JSON content..."
+                rows={4}
+                className={styles.qrInput}
+              />
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={!qrInput.trim()}
+              >
+                Scan QR Data
+              </button>
+            </form>
           </div>
         </div>
       )}
+
+      {error && (
+        <div className={styles.scannerError}>
+          <p>Error: {error}</p>
+        </div>
+      )}
+
+      <div className={styles.scannerInstructions}>
+        <h4>Instructions</h4>
+        <ul>
+          <li>Click "Start Scanning" to begin</li>
+          <li>Enter QR code data manually in the text area</li>
+          <li>You can enter JSON data or plain text</li>
+          <li>Click "Scan QR Data" to process the input</li>
+        </ul>
+      </div>
     </div>
   );
 };

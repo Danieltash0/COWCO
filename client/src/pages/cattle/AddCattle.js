@@ -7,11 +7,12 @@ const AddCattle = () => {
   const { addCattle } = useCattle();
   const navigate = useNavigate();
   const [form, setForm] = useState({
+    tag_number: '',
     name: '',
     breed: '',
     health: 'Good',
     gender: 'Female',
-    dateOfBirth: '',
+    date_of_birth: '',
     notes: ''
   });
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,17 @@ const AddCattle = () => {
       <form onSubmit={handleSubmit} className="cattle-form">
         <div className="form-row">
           <div className="form-group">
+            <label>Tag Number *</label>
+            <input
+              type="text"
+              name="tag_number"
+              value={form.tag_number}
+              onChange={handleChange}
+              placeholder="e.g., CT001"
+              required
+            />
+          </div>
+          <div className="form-group">
             <label>Name *</label>
             <input
               type="text"
@@ -53,6 +65,9 @@ const AddCattle = () => {
               required
             />
           </div>
+        </div>
+
+        <div className="form-row">
           <div className="form-group">
             <label>Breed *</label>
             <select name="breed" value={form.breed} onChange={handleChange} required>
@@ -64,9 +79,6 @@ const AddCattle = () => {
               <option value="Brahman">Brahman</option>
             </select>
           </div>
-        </div>
-
-        <div className="form-row">
           <div className="form-group">
             <label>Health Status *</label>
             <select name="health" value={form.health} onChange={handleChange} required>
@@ -76,6 +88,9 @@ const AddCattle = () => {
               <option value="Poor">Poor</option>
             </select>
           </div>
+        </div>
+
+        <div className="form-row">
           <div className="form-group">
             <label>Gender *</label>
             <select name="gender" value={form.gender} onChange={handleChange} required>
@@ -83,16 +98,15 @@ const AddCattle = () => {
               <option value="Male">Male</option>
             </select>
           </div>
-        </div>
-
-        <div className="form-group">
-          <label>Date of Birth</label>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={form.dateOfBirth}
-            onChange={handleChange}
-          />
+          <div className="form-group">
+            <label>Date of Birth</label>
+            <input
+              type="date"
+              name="date_of_birth"
+              value={form.date_of_birth}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
         <div className="form-group">

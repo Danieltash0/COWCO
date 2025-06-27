@@ -1,9 +1,35 @@
 const db = require('../utils/database');
 
 exports.createCattle = async (cattle) => {
+  // Generate a unique tag number if not provided
+  const tagNumber = cattle.tag_number || `CT${Date.now()}`;
+  
+  // Validate and sanitize input data
+  const cattleData = {
+    tag_number: tagNumber,
+    name: cattle.name || null,
+    breed: cattle.breed || null,
+    health: cattle.health || 'Good',
+    gender: cattle.gender || 'Female',
+    date_of_birth: cattle.date_of_birth || null,
+    notes: cattle.notes || null,
+    age: cattle.age || null,
+    added_by: cattle.added_by || 1 // Default to admin user
+  };
+
   const [result] = await db.execute(
-    'INSERT INTO cattle (tag_number, name, breed, age, added_by) VALUES (?, ?, ?, ?, ?)',
-    [cattle.tag_number, cattle.name, cattle.breed, cattle.age, cattle.added_by]
+    'INSERT INTO cattle (tag_number, name, breed, health, gender, date_of_birth, notes, age, added_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      cattleData.tag_number,
+      cattleData.name,
+      cattleData.breed,
+      cattleData.health,
+      cattleData.gender,
+      cattleData.date_of_birth,
+      cattleData.notes,
+      cattleData.age,
+      cattleData.added_by
+    ]
   );
   return result.insertId;
 };
@@ -19,9 +45,31 @@ exports.getCattleById = async (id) => {
 };
 
 exports.updateCattle = async (id, cattle) => {
+  // Validate and sanitize input data
+  const cattleData = {
+    tag_number: cattle.tag_number || null,
+    name: cattle.name || null,
+    breed: cattle.breed || null,
+    health: cattle.health || 'Good',
+    gender: cattle.gender || 'Female',
+    date_of_birth: cattle.date_of_birth || null,
+    notes: cattle.notes || null,
+    age: cattle.age || null
+  };
+
   await db.execute(
-    'UPDATE cattle SET tag_number=?, name=?, breed=?, age=? WHERE cattle_id=?',
-    [cattle.tag_number, cattle.name, cattle.breed, cattle.age, id]
+    'UPDATE cattle SET tag_number=?, name=?, breed=?, health=?, gender=?, date_of_birth=?, notes=?, age=? WHERE cattle_id=?',
+    [
+      cattleData.tag_number,
+      cattleData.name,
+      cattleData.breed,
+      cattleData.health,
+      cattleData.gender,
+      cattleData.date_of_birth,
+      cattleData.notes,
+      cattleData.age,
+      id
+    ]
   );
 };
 

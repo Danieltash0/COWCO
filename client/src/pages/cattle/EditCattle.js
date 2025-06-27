@@ -10,14 +10,12 @@ const EditCattle = () => {
   const navigate = useNavigate();
   const [cattle, setCattle] = useState(null);
   const [form, setForm] = useState({
+    tag_number: '',
     name: '',
     breed: '',
-    age: '',
-    weight: '',
     health: 'Good',
-    location: '',
     gender: 'Female',
-    dateOfBirth: '',
+    date_of_birth: '',
     notes: ''
   });
   const [loading, setLoading] = useState(true);
@@ -25,19 +23,17 @@ const EditCattle = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchCattle = () => {
-      const cattleData = getCattleById(id);
+    const fetchCattle = async () => {
+      const cattleData = await getCattleById(id);
       if (cattleData) {
         setCattle(cattleData);
         setForm({
+          tag_number: cattleData.tag_number || '',
           name: cattleData.name || '',
           breed: cattleData.breed || '',
-          age: cattleData.age || '',
-          weight: cattleData.weight || '',
           health: cattleData.health || 'Good',
-          location: cattleData.location || '',
           gender: cattleData.gender || 'Female',
-          dateOfBirth: cattleData.dateOfBirth || '',
+          date_of_birth: cattleData.date_of_birth || '',
           notes: cattleData.notes || ''
         });
       } else {
@@ -80,6 +76,16 @@ const EditCattle = () => {
       <form onSubmit={handleSubmit} className="cattle-form">
         <div className="form-row">
           <div className="form-group">
+            <label>Tag Number *</label>
+            <input
+              type="text"
+              name="tag_number"
+              value={form.tag_number}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
             <label>Name *</label>
             <input
               type="text"
@@ -89,6 +95,9 @@ const EditCattle = () => {
               required
             />
           </div>
+        </div>
+
+        <div className="form-row">
           <div className="form-group">
             <label>Breed *</label>
             <select name="breed" value={form.breed} onChange={handleChange} required>
@@ -100,35 +109,6 @@ const EditCattle = () => {
               <option value="Brahman">Brahman</option>
             </select>
           </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Age (years) *</label>
-            <input
-              type="number"
-              name="age"
-              value={form.age}
-              onChange={handleChange}
-              min="0"
-              max="20"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Weight (kg) *</label>
-            <input
-              type="number"
-              name="weight"
-              value={form.weight}
-              onChange={handleChange}
-              min="0"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
           <div className="form-group">
             <label>Health Status *</label>
             <select name="health" value={form.health} onChange={handleChange} required>
@@ -138,6 +118,9 @@ const EditCattle = () => {
               <option value="Poor">Poor</option>
             </select>
           </div>
+        </div>
+
+        <div className="form-row">
           <div className="form-group">
             <label>Gender *</label>
             <select name="gender" value={form.gender} onChange={handleChange} required>
@@ -145,26 +128,12 @@ const EditCattle = () => {
               <option value="Male">Male</option>
             </select>
           </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Location *</label>
-            <input
-              type="text"
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-              placeholder="e.g., Barn A - Stall 1"
-              required
-            />
-          </div>
           <div className="form-group">
             <label>Date of Birth</label>
             <input
               type="date"
-              name="dateOfBirth"
-              value={form.dateOfBirth}
+              name="date_of_birth"
+              value={form.date_of_birth}
               onChange={handleChange}
             />
           </div>

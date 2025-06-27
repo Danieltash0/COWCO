@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiRequest } from '../api/config';
 
 const AuthContext = createContext();
 
@@ -17,7 +18,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is logged in from localStorage
     const savedUser = localStorage.getItem('cowco_user');
-    if (savedUser) {
+    const token = localStorage.getItem('token');
+    if (savedUser && token) {
       setUser(JSON.parse(savedUser));
     }
     setLoading(false);
@@ -25,23 +27,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // Mock API call - replace with actual API
-      const mockUsers = [
-        { id: 1, name: 'John Manager', email: 'manager@cowco.com', role: 'Farm Manager' },
-        { id: 2, name: 'Dr. Sarah Vet', email: 'vet@cowco.com', role: 'Veterinarian' },
-        { id: 3, name: 'Mike Worker', email: 'worker@cowco.com', role: 'Worker' },
-        { id: 4, name: 'Admin User', email: 'admin@cowco.com', role: 'Admin' }
-      ];
-
-      const foundUser = mockUsers.find(u => u.email === email);
+      const response = await apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
       
-      if (foundUser && password === 'password123') {
-        const userData = { ...foundUser, token: 'mock-jwt-token' };
+      if (response.token) {
+        const userData = { ...response.user, token: response.token };
         setUser(userData);
         localStorage.setItem('cowco_user', JSON.stringify(userData));
+        localStorage.setItem('token', response.token);
         return { success: true, user: userData };
       } else {
-        throw new Error('Invalid credentials');
+        throw new Error('Login failed');
       }
     } catch (error) {
       return { success: false, error: error.message };
@@ -50,18 +48,22 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (userData) => {
     try {
-      // Mock API call - replace with actual API
-      const newUser = {
-        id: Date.now(),
-        name: userData.name,
-        email: userData.email,
-        role: userData.role,
-        token: 'mock-jwt-token'
-      };
+      const response = await apiRequest('/users/signup', {
+        method: 'POST',
+        body: JSON.stringify(userData),
+      });
       
-      setUser(newUser);
-      localStorage.setItem('cowco_user', JSON.stringify(newUser));
-      return { success: true, user: newUser };
+      if (response.userId) {
+        // After successful signup, automatically log in the user
+        const loginResult = await login(userData.email, userData.password);
+        if (loginResult.success) {
+          return { success: true, user: loginResult.user };
+        } else {
+          return { success: true, message: 'Account created successfully. Please log in.' };
+        }
+      } else {
+        throw new Error('Signup failed');
+      }
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -70,6 +72,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('cowco_user');
+    localStorage.removeItem('token');
   };
 
   const value = {

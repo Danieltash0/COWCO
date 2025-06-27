@@ -43,6 +43,23 @@ CREATE TABLE health_records (
     FOREIGN KEY (vet_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
+-- Health Alerts Table
+CREATE TABLE health_alerts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cattle_id INT,
+    type VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    due_date DATE NOT NULL,
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    status ENUM('pending', 'completed', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    INDEX idx_health_alerts_cattle_id (cattle_id),
+    INDEX idx_health_alerts_due_date (due_date),
+    INDEX idx_health_alerts_priority (priority),
+    INDEX idx_health_alerts_status (status)
+);
+
 -- Cattle Events Table (for breeding, milking, feeding, financial)
 CREATE TABLE cattle_events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -159,6 +176,12 @@ INSERT INTO tasks (title, description, assigned_to, assigned_by, priority, categ
 INSERT INTO health_records (cattle_id, vet_id, treatment, vaccination, diagnosis, record_date) VALUES 
 (1, 1, 'Routine checkup completed', 'Annual vaccination', 'Healthy', '2024-01-15'),
 (2, 1, 'Hoof trimming', 'None', 'Minor hoof issue resolved', '2024-01-10');
+
+-- Insert sample health alerts
+INSERT INTO health_alerts (cattle_id, type, description, due_date, priority, status) VALUES 
+(1, 'vaccination', 'Annual vaccination due', '2024-02-15', 'medium', 'pending'),
+(2, 'checkup', 'Routine health check', '2024-01-25', 'low', 'pending'),
+(3, 'treatment', 'Follow-up for leg injury', '2024-01-20', 'high', 'pending');
 
 -- Insert sample QR codes
 INSERT INTO qr_codes (cattle_id, qr_data) VALUES 

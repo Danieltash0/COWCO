@@ -5,9 +5,12 @@ const API_BASE_URL = 'http://localhost:5000/api';
 export const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   
+  // Ensure Content-Type is application/json for requests with body
+  const hasBody = options.body || options.method === 'POST' || options.method === 'PUT';
+  
   const defaultOptions = {
     headers: {
-      'Content-Type': 'application/json',
+      ...(hasBody && { 'Content-Type': 'application/json' }),
       ...options.headers,
     },
   };

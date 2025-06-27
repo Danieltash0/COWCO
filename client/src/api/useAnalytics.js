@@ -80,20 +80,7 @@ export const useAnalytics = () => {
       return response;
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      // Return mock data for development
-      return {
-        totalIncome: 45000,
-        totalExpenses: 32000,
-        netProfit: 13000,
-        profitMargin: 28.9,
-        categoryBreakdown: {
-          'Feed & Nutrition': 12000,
-          'Veterinary Care': 8000,
-          'Equipment & Maintenance': 6000,
-          'Labor & Wages': 4000,
-          'Utilities': 2000
-        }
-      };
+      throw error;
     }
   };
 
@@ -129,6 +116,6 @@ export const useAnalytics = () => {
     deleteFinancialRecord,
     getAnalytics,
     exportFinancialReport,
-    refreshRecords: fetchFinancialRecords
+    refreshFinancialRecords: fetchFinancialRecords
   };
 }; 

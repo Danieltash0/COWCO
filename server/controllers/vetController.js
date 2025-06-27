@@ -1,4 +1,5 @@
 const HealthRecord = require('../models/HealthRecord');
+const pool = require('../utils/database');
 
 exports.createHealthRecord = async (req, res) => {
   try {
@@ -57,15 +58,119 @@ exports.getHealthRecordsByCattle = async (req, res) => {
   }
 };
 
-// Health Alerts - For now, we'll use a simple implementation
-// In a real app, you might want a separate alerts table
+// Health Alerts
+exports.createHealthAlert = async (req, res) => {
+  try {
+    const { cattle_id, type, description, due_date, priority, status } = req.body;
+    
+    const [result] = await pool.query(
+      'INSERT INTO health_alerts (cattle_id, type, description, due_date, priority, status, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
+      [cattle_id, type, description, due_date, priority, status || 'pending']
+    );
+    
+    res.status(201).json({ alert_id: result.insertId, message: 'Health alert created successfully' });
+  } catch (err) {
+    console.error('Error creating health alert:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.getHealthAlerts = async (req, res) => {
   try {
-    // This is a simplified implementation
-    // In a real app, you'd query upcoming vaccinations, treatments, etc.
-    const alerts = [];
+    const [rows] = await pool.query(`
+      SELECT ha.id, ha.cattle_id, c.name as cattle_name, ha.type, ha.description, 
+             ha.due_date, ha.priority, ha.status, ha.created_at
+      FROM health_alerts ha
+      LEFT JOIN cattle c ON ha.cattle_id = c.id
+      ORDER BY ha.due_date ASC
+    `);
+    
+    const alerts = rows.map(alert => ({
+      id: alert.id,
+      cattle_id: alert.cattle_id,
+      cattle_name: alert.cattle_name,
+      type: alert.type,
+      description: alert.description,
+      due_date: alert.due_date,
+      priority: alert.priority,
+      status: alert.status,
+      created_at: alert.created_at
+    }));
+    
     res.json(alerts);
   } catch (err) {
+    console.error('Error fetching health alerts:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getHealthAlertById = async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT ha.id, ha.cattle_id, c.name as cattle_name, ha.type, ha.description, 
+             ha.due_date, ha.priority, ha.status, ha.created_at
+      FROM health_alerts ha
+      LEFT JOIN cattle c ON ha.cattle_id = c.id
+      WHERE ha.id = ?
+    `, [req.params.id]);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Health alert not found' });
+    }
+    
+    const alert = {
+      id: rows[0].id,
+      cattle_id: rows[0].cattle_id,
+      cattle_name: rows[0].cattle_name,
+      type: rows[0].type,
+      description: rows[0].description,
+      due_date: rows[0].due_date,
+      priority: rows[0].priority,
+      status: rows[0].status,
+      created_at: rows[0].created_at
+    };
+    
+    res.json(alert);
+  } catch (err) {
+    console.error('Error fetching health alert:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateHealthAlert = async (req, res) => {
+  try {
+    const { type, description, due_date, priority, status } = req.body;
+    
+    const [result] = await pool.query(
+      'UPDATE health_alerts SET type = ?, description = ?, due_date = ?, priority = ?, status = ? WHERE id = ?',
+      [type, description, due_date, priority, status, req.params.id]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Health alert not found' });
+    }
+    
+    res.json({ message: 'Health alert updated successfully' });
+  } catch (err) {
+    console.error('Error updating health alert:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteHealthAlert = async (req, res) => {
+  try {
+    const [result] = await pool.query(
+      'DELETE FROM health_alerts WHERE id = ?',
+      [req.params.id]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Health alert not found' });
+    }
+    
+    res.json({ message: 'Health alert deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting health alert:', err);
     res.status(500).json({ error: err.message });
   }
 };

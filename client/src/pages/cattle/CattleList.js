@@ -10,9 +10,9 @@ const CattleList = () => {
   const [healthFilter, setHealthFilter] = useState('all');
 
   const filteredCattle = cattle.filter(cow => {
-    const matchesSearch = cow.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         cow.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         cow.breed.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = cow.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         cow.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         cow.breed?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesHealth = healthFilter === 'all' || cow.health === healthFilter;
     return matchesSearch && matchesHealth;
   });
@@ -72,7 +72,7 @@ const CattleList = () => {
           </div>
         ) : (
           filteredCattle.map(cow => (
-            <CattleCard key={cow.id} cattle={cow} horizontalBar />
+            <CattleCard key={cow.cattle_id || cow.id} cattle={cow} horizontalBar />
           ))
         )}
       </div>

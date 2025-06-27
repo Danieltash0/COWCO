@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const qrController = require('../controllers/qrController');
+const { authenticateToken } = require('../middleware/auth');
+
+// All QR routes require authentication
+router.use(authenticateToken);
 
 // QR Code generation and management
 router.post('/generate', qrController.generateQRCode);

@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const analyticsController = require('../controllers/analyticsController');
-const auth = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 
 // All routes require authentication
-router.use(auth);
+router.use(authenticateToken);
 
 // CRUD for financial records
 router.get('/financial-records', analyticsController.getAllFinancialRecords);

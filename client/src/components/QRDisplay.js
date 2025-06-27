@@ -1,31 +1,41 @@
 import React from 'react';
+import QRCode from 'qrcode.react';
 import styles from '../styles/QR.module.css';
 
 const QRDisplay = ({ data, title, size = 'medium' }) => {
-  // Mock QR code data - in a real app, you would generate actual QR codes
-  const mockQRCode = {
-    id: data?.id || 'qr_123',
-    content: data?.content || JSON.stringify(data),
-    type: data?.type || 'text',
-    timestamp: new Date().toISOString()
-  };
+  const qrData = data?.content || JSON.stringify(data);
+  const qrId = data?.id || `qr_${Date.now()}`;
+  const qrType = data?.type || 'text';
+  const timestamp = data?.timestamp || new Date().toISOString();
 
   const handleDownload = () => {
-    // Mock download functionality
-    console.log('Downloading QR code:', mockQRCode);
-    alert('QR code download started!');
+    const canvas = document.querySelector(`#qr-${qrId} canvas`);
+    if (canvas) {
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `qr-code-${qrId}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   };
 
   const handlePrint = () => {
-    // Mock print functionality
-    console.log('Printing QR code:', mockQRCode);
     window.print();
   };
 
   const handleCopy = () => {
-    // Mock copy functionality
-    navigator.clipboard.writeText(mockQRCode.content);
+    navigator.clipboard.writeText(qrData);
     alert('QR code data copied to clipboard!');
+  };
+
+  const getQRSize = () => {
+    switch (size) {
+      case 'small': return 100;
+      case 'large': return 300;
+      default: return 200;
+    }
   };
 
   return (
@@ -33,35 +43,18 @@ const QRDisplay = ({ data, title, size = 'medium' }) => {
       <div className={`${styles.qrCode} ${styles[size]}`}>
         <div className={styles.qrInfo}>
           <h3>{title || 'QR Code'}</h3>
-          <p>ID: {mockQRCode.id}</p>
-          <p>Type: {mockQRCode.type}</p>
-          <p>Generated: {new Date(mockQRCode.timestamp).toLocaleString()}</p>
+          <p>ID: {qrId}</p>
+          <p>Type: {qrType}</p>
+          <p>Generated: {new Date(timestamp).toLocaleString()}</p>
         </div>
         
-        {/* Mock QR code image */}
-        <div 
-          style={{
-            width: size === 'small' ? '100px' : size === 'large' ? '300px' : '200px',
-            height: size === 'small' ? '100px' : size === 'large' ? '300px' : '200px',
-            backgroundColor: '#000',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(25, 1fr)',
-            gridTemplateRows: 'repeat(25, 1fr)',
-            gap: '1px',
-            padding: '10px',
-            borderRadius: '8px'
-          }}
-        >
-          {Array.from({ length: 625 }, (_, i) => (
-            <div
-              key={i}
-              style={{
-                backgroundColor: Math.random() > 0.5 ? '#000' : '#fff',
-                width: '100%',
-                height: '100%'
-              }}
-            />
-          ))}
+        <div id={`qr-${qrId}`} className={styles.qrCodeContainer}>
+          <QRCode 
+            value={qrData}
+            size={getQRSize()}
+            level="M"
+            includeMargin={true}
+          />
         </div>
       </div>
 
@@ -88,7 +81,7 @@ const QRDisplay = ({ data, title, size = 'medium' }) => {
 
       <div className={styles.qrInfo}>
         <h4>QR Code Details</h4>
-        <p><strong>Content:</strong> {mockQRCode.content.substring(0, 100)}...</p>
+        <p><strong>Content:</strong> {qrData.substring(0, 100)}...</p>
         <p><strong>Size:</strong> {size}</p>
         <p><strong>Format:</strong> PNG</p>
       </div>

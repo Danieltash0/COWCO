@@ -30,18 +30,22 @@ const CattleCard = ({ cattle, horizontalBar }) => {
       <div className="cattle-info">
         <div className="info-row">
           <span className="label">ID tag:</span>
-          <span className="value">{cattle.id}</span>
+          <span className="value">{cattle.cattle_id || cattle.id}</span>
         </div>
         <div className="info-row">
           <span className="label">Name:</span>
           <span className="value">{cattle.name}</span>
         </div>
+        <div className="info-row">
+          <span className="label">Breed:</span>
+          <span className="value">{cattle.breed}</span>
+        </div>
       </div>
       <div className="form-actions">
-        <Link to={`/cattle/${cattle.id}`} className="btn btn-primary">
+        <Link to={`/cattle/${cattle.cattle_id || cattle.id}`} className="btn btn-primary">
           View Profile
         </Link>
-        <Link to={`/cattle/${cattle.id}/qr`} className="btn btn-secondary">
+        <Link to={`/cattle/${cattle.cattle_id || cattle.id}/qr`} className="btn btn-secondary">
           QR Code
         </Link>
       </div>
