@@ -1,5 +1,6 @@
 # Node modules for both client and server
 client/node_modules/
+.cache/
 server/node_modules/
 
 # Build output
