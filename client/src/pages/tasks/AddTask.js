@@ -54,10 +54,23 @@ const AddTask = () => {
     setLoading(true);
     setError('');
 
+    // Find the worker by name to get their user ID
+    const selectedWorker = workers.find(worker => worker.name === form.assignedTo);
+    if (!selectedWorker) {
+      setError('Please select a valid worker');
+      setLoading(false);
+      return;
+    }
+
     const taskData = {
-      ...form,
-      assignedBy: user.name,
-      status: 'pending'
+      title: form.title,
+      description: form.description,
+      assigned_to: selectedWorker.id, // Send user ID, not name
+      assigned_by: user.user_id, // Send user ID, not name
+      priority: form.priority,
+      category: form.category,
+      status: 'pending',
+      due_date: form.dueDate
     };
 
     const result = await addTask(taskData);

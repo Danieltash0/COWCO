@@ -42,6 +42,12 @@ const WorkerDashboard = () => {
         </div>
         
         <div className="dashboard-card">
+          <h3>🥛 Milking Records</h3>
+          <p>Record and track milk production data, view milking schedules, and monitor individual cow performance for optimal dairy management.</p>
+          <Link to="/milking" className="btn btn-primary">View Milk Records</Link>
+        </div>
+        
+        <div className="dashboard-card">
           <h3>📊 Task Progress</h3>
           <p>Track your task completion progress, view performance metrics, and monitor your productivity throughout the day.</p>
           <Link to="/tasks" className="btn btn-primary">View Progress</Link>

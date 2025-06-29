@@ -73,6 +73,12 @@ const Navbar = () => {
             </Link>
           )}
 
+          {user?.role === 'Worker' && (
+            <Link to="/milking" className={styles.navLink}>
+              Milking
+            </Link>
+          )}
+
           {(user?.role === 'Farm Manager' || user?.role === 'Admin') && (
             <>
               <Link to="/reports" className={styles.navLink}>
@@ -84,9 +90,11 @@ const Navbar = () => {
             </>
           )}
 
-          <Link to="/qr-generator" className={styles.navLink}>
-            QR Generator
-          </Link>
+          {(user?.role === 'Farm Manager' || user?.role === 'Admin') && (
+            <Link to="/qr-generator" className={styles.navLink}>
+              QR Generator
+            </Link>
+          )}
           
           <Link to="/qr-scanner" className={styles.navLink}>
             QR Scanner

@@ -834,3 +834,216 @@
     font-size: 14px;
   }
 }
+
+/* Camera QR Scanner Styles */
+.cameraContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.cameraContainer h3 {
+  color: var(--primary-green);
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.cameraContainer p {
+  color: var(--gray-dark);
+  margin: 0;
+  text-align: center;
+}
+
+.qrReader {
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-md);
+}
+
+.cattleModal {
+  background-color: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.modalHeader h3 {
+  color: var(--primary-green);
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.modalHeader .closeButton {
+  background: none;
+  border: none;
+  font-size: var(--font-size-xl);
+  color: var(--gray-dark);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.modalHeader .closeButton:hover {
+  background-color: var(--gray-light);
+  color: var(--gray-dark);
+}
+
+.cattleInfo {
+  padding: var(--spacing-lg);
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.infoRow .label {
+  font-weight: 600;
+  color: var(--gray-dark);
+  min-width: 120px;
+  margin-right: var(--spacing-md);
+}
+
+.infoRow .value {
+  color: var(--text-dark);
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--gray-light);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modalActions .viewButton,
+.modalActions .scanAgainButton {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 140px;
+}
+
+.modalActions .viewButton {
+  background-color: var(--primary-green);
+  color: var(--white);
+}
+
+.modalActions .viewButton:hover {
+  background-color: var(--primary-green-dark);
+  transform: translateY(-1px);
+}
+
+.modalActions .scanAgainButton {
+  background-color: var(--secondary-green);
+  color: var(--white);
+}
+
+.modalActions .scanAgainButton:hover {
+  background-color: var(--secondary-green-dark);
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cattleModal {
+    margin: var(--spacing-md);
+    max-height: 95vh;
+  }
+  
+  .infoRow {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .infoRow .label {
+    min-width: auto;
+    margin-right: 0;
+  }
+  
+  .infoRow .value {
+    text-align: left;
+  }
+  
+  .modalActions {
+    flex-direction: column;
+  }
+  
+  .modalActions .viewButton,
+  .modalActions .scanAgainButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .qrReader {
+    max-width: 100%;
+  }
+  
+  .cattleModal {
+    margin: var(--spacing-sm);
+  }
+  
+  .modalHeader,
+  .cattleInfo,
+  .modalActions {
+    padding: var(--spacing-md);
+  }
+}

@@ -104,8 +104,9 @@ export const useTasks = () => {
       const response = await apiRequest('/admin/users', {
         headers: getAuthHeaders(),
       });
-      // Filter only workers
-      return response.filter(user => user.role === 'worker' && user.status === 'active');
+      // Filter only workers (backend sends 'Worker' not 'worker')
+      const workers = response.filter(user => user.role === 'Worker' && user.status === 'active');
+      return workers;
     } catch (error) {
       console.error('Error fetching workers:', error);
       return [];

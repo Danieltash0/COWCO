@@ -2,9 +2,30 @@ const Task = require('../models/Task');
 
 exports.createTask = async (req, res) => {
   try {
-    const id = await Task.createTask(req.body);
+    const { title, description, assigned_to, assigned_by, priority, category, status, due_date } = req.body;
+    
+    // Validate required fields
+    if (!title || !description || !assigned_to || !assigned_by || !due_date) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: title, description, assigned_to, assigned_by, and due_date are required' 
+      });
+    }
+    
+    const taskData = {
+      title,
+      description,
+      assigned_to: parseInt(assigned_to),
+      assigned_by: parseInt(assigned_by),
+      priority: priority || 'medium',
+      category: category || 'general',
+      status: status || 'pending',
+      due_date
+    };
+    
+    const id = await Task.createTask(taskData);
     res.status(201).json({ task_id: id });
   } catch (err) {
+    console.error('Error creating task:', err);
     res.status(500).json({ error: err.message });
   }
 };

@@ -9,11 +9,13 @@ router.use(authenticateToken);
 // Debug endpoint to check user info
 router.get('/debug/user', adminController.debugUserRole);
 
+// User management - allow both admin and farm manager access
+router.get('/users', requireRole(['admin', 'Admin', 'manager', 'Farm Manager']), adminController.getAllUsers);
+
 // Apply admin role requirement to all other routes
 router.use(requireRole(['admin', 'Admin']));
 
-// User management
-router.get('/users', adminController.getAllUsers);
+// User management (create, update, delete) - admin only
 router.post('/users', adminController.createUser);
 router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);

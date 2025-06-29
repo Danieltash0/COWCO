@@ -54,6 +54,7 @@ app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/vet', require('./routes/vetRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/qr', require('./routes/qrRoutes'));
+app.use('/api/milking', require('./routes/milkingRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 

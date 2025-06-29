@@ -1,5 +1,5 @@
 import React from 'react';
-import QRScanner from '../../components/QRScanner';
+import CameraQRScanner from '../../components/CameraQRScanner';
 import styles from '../../styles/QR.module.css';
 
 const QRScannerPage = () => {
@@ -7,9 +7,9 @@ const QRScannerPage = () => {
     <div className={styles.pageContainer}>
       <div className={styles.pageHeader}>
         <h1>QR Code Scanner</h1>
-        <p>Scan QR codes to quickly access cattle information</p>
+        <p>Scan QR codes using your camera to quickly access cattle information</p>
       </div>
-      <QRScanner />
+      <CameraQRScanner />
     </div>
   );
 };

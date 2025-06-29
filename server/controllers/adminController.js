@@ -1,22 +1,33 @@
 const User = require('../models/User');
 const ActivityLog = require('../models/ActivityLog');
 
+// Role mapping from database to frontend
+const roleMapping = {
+  'manager': 'Farm Manager',
+  'vet': 'Veterinarian',
+  'worker': 'Worker',
+  'admin': 'Admin'
+};
+
 // User Management
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.getAllUsers();
     
-    const formattedUsers = users.map(user => ({
-      id: user.user_id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-      lastLogin: user.last_login,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at,
-      permissions: getPermissionsByRole(user.role)
-    }));
+    const formattedUsers = users.map(user => {
+      const mappedRole = roleMapping[user.role] || user.role;
+      return {
+        id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: mappedRole,
+        status: user.status,
+        lastLogin: user.last_login,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+        permissions: getPermissionsByRole(user.role)
+      };
+    });
     
     res.json(formattedUsers);
   } catch (error) {

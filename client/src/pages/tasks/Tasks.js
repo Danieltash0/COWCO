@@ -38,7 +38,7 @@ const Tasks = () => {
     }
   };
 
-  const userTasks = tasks.filter(task => task.assignedTo === user.name);
+  const userTasks = tasks.filter(task => task.assigned_to === user.user_id);
 
   const filteredTasks = filter === 'all' 
     ? (user.role === 'Worker' ? userTasks : tasks)
@@ -66,11 +66,13 @@ const Tasks = () => {
           <p>Overview of all tasks in the system</p>
           <div className="summary-count">{tasks.length}</div>
         </div>
-        <div className="dashboard-card">
-          <h3>👤 My Tasks</h3>
-          <p>Tasks assigned to you</p>
-          <div className="summary-count">{userTasks.length}</div>
-        </div>
+        {user.role === 'Worker' && (
+          <div className="dashboard-card">
+            <h3>👤 My Tasks</h3>
+            <p>Tasks assigned to you</p>
+            <div className="summary-count">{userTasks.length}</div>
+          </div>
+        )}
         <div className="dashboard-card">
           <h3>✅ Completed</h3>
           <p>Successfully completed tasks</p>
@@ -97,7 +99,6 @@ const Tasks = () => {
           >
             <option value="all">All Tasks</option>
             <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
           </select>
         </div>
@@ -117,14 +118,14 @@ const Tasks = () => {
           </div>
         ) : (
           filteredTasks.map(task => {
-            const dueDate = new Date(task.dueDate);
+            const dueDate = new Date(task.due_date);
             const today = new Date();
             const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
             const isOverdue = daysUntilDue < 0 && task.status !== 'completed';
             const isDueSoon = daysUntilDue <= 3 && daysUntilDue >= 0 && task.status !== 'completed';
 
             return (
-              <div key={task.id} className={`dashboard-card ${isOverdue ? 'overdue' : ''} ${isDueSoon ? 'due-soon' : ''}`}>
+              <div key={task.task_id} className={`dashboard-card ${isOverdue ? 'overdue' : ''} ${isDueSoon ? 'due-soon' : ''}`}>
                 <div className="card-header">
                   <h3 className="card-title">{task.title}</h3>
                   <div className="task-meta">
@@ -142,11 +143,11 @@ const Tasks = () => {
                   <div className="cattle-info">
                     <div className="info-row">
                       <span className="label">Assigned To:</span>
-                      <span className="value">{task.assignedTo}</span>
+                      <span className="value">{task.assigned_to_name}</span>
                     </div>
                     <div className="info-row">
                       <span className="label">Assigned By:</span>
-                      <span className="value">{task.assignedBy}</span>
+                      <span className="value">{task.assigned_by_name}</span>
                     </div>
                     <div className="info-row">
                       <span className="label">Category:</span>
@@ -155,15 +156,15 @@ const Tasks = () => {
                     <div className="info-row">
                       <span className="label">Due Date:</span>
                       <span className={`value ${isOverdue ? 'text-red' : ''} ${isDueSoon ? 'text-orange' : ''}`}>
-                        {task.dueDate}
+                        {new Date(task.due_date).toLocaleDateString()}
                         {isOverdue && <span className="status red ml-2">OVERDUE</span>}
                         {isDueSoon && <span className="status orange ml-2">DUE SOON</span>}
                       </span>
                     </div>
-                    {task.status === 'completed' && task.completedDate && (
+                    {task.status === 'completed' && task.completed_date && (
                       <div className="info-row">
                         <span className="label">Completed:</span>
-                        <span className="value">{new Date(task.completedDate).toLocaleDateString()}</span>
+                        <span className="value">{new Date(task.completed_date).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
@@ -172,7 +173,7 @@ const Tasks = () => {
                 <div className="form-actions">
                   {task.status !== 'completed' && (
                     <button 
-                      onClick={() => handleComplete(task.id)}
+                      onClick={() => handleComplete(task.task_id)}
                       className="btn btn-success"
                     >
                       Mark Complete
@@ -180,7 +181,7 @@ const Tasks = () => {
                   )}
                   {(user.role === 'Farm Manager' || user.role === 'Admin') && (
                     <button 
-                      onClick={() => handleDelete(task.id)}
+                      onClick={() => handleDelete(task.task_id)}
                       className="btn btn-danger"
                     >
                       Delete

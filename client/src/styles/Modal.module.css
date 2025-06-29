@@ -6,10 +6,11 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     z-index: var(--z-modal-backdrop);
     padding: var(--spacing-lg);
+    padding-top: 200px;
     animation: fadeIn var(--transition-base);
   }
   
@@ -22,6 +23,7 @@
     overflow: hidden;
     animation: slideIn var(--transition-base);
     position: relative;
+    z-index: var(--z-modal);
   }
   
   .modal.small {
@@ -262,6 +264,7 @@
   @media (max-width: 768px) {
     .modal-overlay {
       padding: var(--spacing-md);
+      padding-top: 100px;
     }
     
     .modal {
@@ -305,7 +308,7 @@
   @keyframes slideIn {
     from {
       opacity: 0;
-      transform: translateY(-20px) scale(0.95);
+      transform: translateY(-50px) scale(0.95);
     }
     to {
       opacity: 1;

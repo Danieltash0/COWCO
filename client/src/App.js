@@ -33,6 +33,9 @@ import Tasks from './pages/tasks/Tasks';
 import AddTask from './pages/tasks/AddTask';
 import Checklist from './pages/tasks/Checklist';
 
+// Milking Pages
+import Milking from './pages/milking/Milking';
+
 // Report Pages
 import Reports from './pages/reports/Reports';
 import Analytics from './pages/reports/Analytics';
@@ -152,6 +155,13 @@ function App() {
             <Route path="/tasks/checklist" element={
               <ProtectedRoute allowedRoles={['Worker']}>
                 <Checklist />
+              </ProtectedRoute>
+            } />
+
+            {/* Milking Routes */}
+            <Route path="/milking" element={
+              <ProtectedRoute allowedRoles={['Worker']}>
+                <Milking />
               </ProtectedRoute>
             } />
 
