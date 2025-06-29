@@ -38,10 +38,10 @@ const Reports = () => {
                 <strong>Total Cattle:</strong> {productionSummary.totalCattle}
               </div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Total Milk (30 days):</strong> {productionSummary.totalMilk.toFixed(2)} L
+                <strong>Total Milk (30 days):</strong> {Number(productionSummary.totalMilk).toFixed(2)} L
               </div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Average per Cow:</strong> {productionSummary.averagePerCow.toFixed(2)} L
+                <strong>Average per Cow:</strong> {Number(productionSummary.averagePerCow).toFixed(2)} L
               </div>
               <div style={{ marginBottom: '10px' }}>
                 <strong>Milking Sessions:</strong> {productionSummary.milkingSessions}
@@ -90,26 +90,26 @@ const Reports = () => {
           {financialSummary && (
             <div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Revenue (30 days):</strong> ${financialSummary.revenue.toFixed(2)}
+                <strong>Revenue (30 days):</strong> KSHS {Number(financialSummary.revenue).toFixed(2)}
               </div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Expenses (30 days):</strong> ${financialSummary.expenses.toFixed(2)}
+                <strong>Expenses (30 days):</strong> KSHS {Number(financialSummary.expenses).toFixed(2)}
               </div>
               <div style={{ marginBottom: '10px' }}>
                 <strong>Profit:</strong> 
-                <span style={{ color: financialSummary.profit >= 0 ? '#28a745' : '#dc3545' }}>
-                  {' '}${financialSummary.profit.toFixed(2)}
+                <span style={{ color: Number(financialSummary.profit) >= 0 ? '#28a745' : '#dc3545' }}>
+                  {' '}KSHS {Number(financialSummary.profit).toFixed(2)}
                 </span>
               </div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Profit Margin:</strong> {financialSummary.profitMargin}%
+                <strong>Profit Margin:</strong> {Number(financialSummary.profitMargin).toFixed(1)}%
               </div>
               <div>
                 <strong>Top Expense Categories:</strong>
                 <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
-                  {financialSummary.topExpenseCategories.map((category, index) => (
+                  {financialSummary.topExpenseCategories && financialSummary.topExpenseCategories.map((category, index) => (
                     <li key={index}>
-                      {category.category}: ${category.total.toFixed(2)}
+                      {category.category}: KSHS {Number(category.total).toFixed(2)}
                     </li>
                   ))}
                 </ul>

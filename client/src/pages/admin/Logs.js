@@ -8,7 +8,6 @@ const Logs = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
-  const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
   const [showLoginLogs, setShowLoginLogs] = useState(false);
 
   const handleClearLogs = async () => {
@@ -18,7 +17,7 @@ const Logs = () => {
   };
 
   const handleExportLogs = async (format) => {
-    await exportLogs(format, dateRange.startDate, dateRange.endDate);
+    await exportLogs(format);
   };
 
   const getLogLevelColor = (action) => {
@@ -132,30 +131,6 @@ const Logs = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
-        <div className="filter-group">
-          <label>Date Range:</label>
-          <input
-            type="date"
-            value={dateRange.startDate}
-            onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
-          />
-          <input
-            type="date"
-            value={dateRange.endDate}
-            onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
-          />
-        </div>
-
-        <div className="filter-group">
-          <label>Export:</label>
-          <button onClick={() => handleExportLogs('csv')} className="btn btn-small btn-secondary">
-            CSV
-          </button>
-          <button onClick={() => handleExportLogs('json')} className="btn btn-small btn-secondary">
-            JSON
-          </button>
-        </div>
       </div>
 
       <div className="logs-table">
@@ -198,45 +173,17 @@ const Logs = () => {
       </div>
 
       <div className="logs-info">
-        <h3>Log Information</h3>
-        <div className="info-grid">
-          <div className="info-item">
-            <h4>📊 Log Levels</h4>
-            <ul>
-              <li><strong>Error:</strong> System errors and critical issues</li>
-              <li><strong>Warning:</strong> Potential issues and warnings</li>
-              <li><strong>Auth:</strong> Login/logout and authentication events</li>
-              <li><strong>Info:</strong> General information and user actions</li>
-            </ul>
-          </div>
-          <div className="info-item">
-            <h4>🔍 Filtering</h4>
-            <ul>
-              <li>Filter by log level to focus on specific issues</li>
-              <li>Search across messages, users, and actions</li>
-              <li>Filter by date range for specific periods</li>
-              <li>View only login/logout events</li>
-            </ul>
-          </div>
-          <div className="info-item">
-            <h4>📅 Retention</h4>
-            <ul>
-              <li>Logs are retained for 30 days by default</li>
-              <li>Critical errors are kept longer</li>
-              <li>Export important logs before clearing</li>
-              <li>Automatic cleanup of old logs</li>
-            </ul>
-          </div>
-          <div className="info-item">
-            <h4>⚙️ Management</h4>
-            <ul>
-              <li>Clear old logs to free up storage space</li>
-              <li>Export logs for external analysis</li>
-              <li>Monitor system health through logs</li>
-              <li>Track user activity and security events</li>
-            </ul>
-          </div>
-        </div>
+        <p>
+          <strong>Total Logs:</strong> {logs.length} | 
+          <strong>Login Events:</strong> {loginLogs.length} | 
+          <strong>Errors:</strong> {logs.filter(log => getLogLevel(log.action) === 'ERROR').length} | 
+          <strong>Active Users (7d):</strong> {logStats.unique_users || 0}
+        </p>
+        <p>
+          <small>
+            Logs are automatically cleared after 30 days. Use the "Clear Old Logs" button to manually clear logs older than 30 days.
+          </small>
+        </p>
       </div>
     </div>
   );

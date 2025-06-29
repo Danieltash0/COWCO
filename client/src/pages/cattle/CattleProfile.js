@@ -87,11 +87,15 @@ const CattleProfile = () => {
                     <p>{cattleData.name}</p>
                   </div>
                   <div className="form-group">
-                    <label>Breed</label>
-                    <p>{cattleData.breed}</p>
+                    <label>Cow Tag</label>
+                    <p>{cattleData.tag_number || 'Not assigned'}</p>
                   </div>
                 </div>
                 <div className="form-row">
+                  <div className="form-group">
+                    <label>Breed</label>
+                    <p>{cattleData.breed}</p>
+                  </div>
                   <div className="form-group">
                     <label>Date of Birth</label>
                     <p>{cattleData.date_of_birth ? new Date(cattleData.date_of_birth).toLocaleDateString() : 'Not specified'}</p>

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTasks } from '../../api/useTasks';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/Tasks.module.css';
 
 const AddTask = () => {
-  const { addTask } = useTasks();
+  const { addTask, fetchWorkers } = useTasks();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -16,8 +16,34 @@ const AddTask = () => {
     dueDate: '',
     category: 'general'
   });
+  const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadWorkers = async () => {
+      const workersList = await fetchWorkers();
+      setWorkers(workersList);
+    };
+    loadWorkers();
+  }, [fetchWorkers]);
+
+  // Check if user is a farm manager
+  if (user.role !== 'Farm Manager') {
+    return (
+      <div className="dashboard-container">
+        <div className="content-header">
+          <h1 className="content-title">Access Denied</h1>
+        </div>
+        <div className="content-container">
+          <p>Only farm managers can add new tasks.</p>
+          <button onClick={() => navigate('/tasks')} className="btn btn-secondary">
+            Back to Tasks
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -83,15 +109,20 @@ const AddTask = () => {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="assignedTo">Assign To *</label>
-            <input
+            <select
               id="assignedTo"
-              type="text"
               name="assignedTo"
               value={form.assignedTo}
               onChange={handleChange}
-              placeholder="Enter assignee name"
               required
-            />
+            >
+              <option value="">Select a worker</option>
+              {workers.map((worker) => (
+                <option key={worker.id} value={worker.name}>
+                  {worker.name}
+                </option>
+              ))}
+            </select>
           </div>
           
           <div className="form-group">

@@ -30,9 +30,9 @@ const AdminDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>📋 Activity Logs</h3>
-          <p>Review system logs, user activities, and security events. Track all system operations and maintain audit trails.</p>
-          <Link to="/logs" className="btn btn-primary">View Logs</Link>
+          <h3>🐄 Cattle Management</h3>
+          <p>Access comprehensive cattle management tools, view all records, and manage farm inventory. Full administrative control over cattle data.</p>
+          <Link to="/cattle" className="btn btn-primary">Manage Cattle</Link>
         </div>
         
         <div className="dashboard-card">
@@ -42,9 +42,9 @@ const AdminDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>🐄 Cattle Management</h3>
-          <p>Access comprehensive cattle management tools, view all records, and manage farm inventory. Full administrative control over cattle data.</p>
-          <Link to="/cattle" className="btn btn-primary">Manage Cattle</Link>
+          <h3>📋 Activity Logs</h3>
+          <p>Review system logs, user activities, and security events. Track all system operations and maintain audit trails.</p>
+          <Link to="/logs" className="btn btn-primary">View Logs</Link>
         </div>
         
         <div className="dashboard-card">

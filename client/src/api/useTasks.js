@@ -99,6 +99,19 @@ export const useTasks = () => {
     return tasks.filter(task => task.category === category);
   };
 
+  const fetchWorkers = async () => {
+    try {
+      const response = await apiRequest('/admin/users', {
+        headers: getAuthHeaders(),
+      });
+      // Filter only workers
+      return response.filter(user => user.role === 'worker' && user.status === 'active');
+    } catch (error) {
+      console.error('Error fetching workers:', error);
+      return [];
+    }
+  };
+
   return {
     tasks,
     loading,
@@ -110,6 +123,7 @@ export const useTasks = () => {
     getTasksByUser,
     getTasksByStatus,
     getTasksByCategory,
+    fetchWorkers,
     refreshTasks: fetchTasks
   };
 };

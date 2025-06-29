@@ -11,7 +11,8 @@ const Users = () => {
   const [form, setForm] = useState({
     name: '',
     email: '',
-    role: 'Worker',
+    role: 'worker',
+    status: 'active',
     password: ''
   });
   const [submitting, setSubmitting] = useState(false);
@@ -36,7 +37,8 @@ const Users = () => {
       setForm({
         name: '',
         email: '',
-        role: 'Worker',
+        role: 'worker',
+        status: 'active',
         password: ''
       });
     }
@@ -48,6 +50,7 @@ const Users = () => {
       name: user.name,
       email: user.email,
       role: user.role,
+      status: user.status,
       password: ''
     });
     setShowModal(true);
@@ -63,12 +66,22 @@ const Users = () => {
     await toggleUserStatus(userId);
   };
 
+  const getRoleDisplayName = (role) => {
+    switch (role) {
+      case 'admin': return 'Admin';
+      case 'manager': return 'Farm Manager';
+      case 'vet': return 'Veterinarian';
+      case 'worker': return 'Worker';
+      default: return role;
+    }
+  };
+
   const getRoleColor = (role) => {
     switch (role) {
-      case 'Admin': return 'red';
-      case 'Farm Manager': return 'blue';
-      case 'Veterinarian': return 'green';
-      case 'Worker': return 'orange';
+      case 'admin': return 'red';
+      case 'manager': return 'blue';
+      case 'vet': return 'green';
+      case 'worker': return 'orange';
       default: return 'gray';
     }
   };
@@ -109,7 +122,7 @@ const Users = () => {
         <div className="summary-card">
           <h3>Admins</h3>
           <div className="summary-count">
-            {users.filter(u => u.role === 'Admin').length}
+            {users.filter(u => u.role === 'admin').length}
           </div>
         </div>
       </div>
@@ -134,7 +147,7 @@ const Users = () => {
                 <td>{user.email}</td>
                 <td>
                   <span className={`role-badge ${getRoleColor(user.role)}`}>
-                    {user.role}
+                    {getRoleDisplayName(user.role)}
                   </span>
                 </td>
                 <td>
@@ -185,7 +198,8 @@ const Users = () => {
           setForm({
             name: '',
             email: '',
-            role: 'Worker',
+            role: 'worker',
+            status: 'active',
             password: ''
           });
         }}
@@ -215,14 +229,24 @@ const Users = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Role *</label>
-            <select name="role" value={form.role} onChange={handleChange} required>
-              <option value="Worker">Worker</option>
-              <option value="Veterinarian">Veterinarian</option>
-              <option value="Farm Manager">Farm Manager</option>
-              <option value="Admin">Admin</option>
-            </select>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Role *</label>
+              <select name="role" value={form.role} onChange={handleChange} required>
+                <option value="worker">Worker</option>
+                <option value="vet">Veterinarian</option>
+                <option value="manager">Farm Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Status *</label>
+              <select name="status" value={form.status} onChange={handleChange} required>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
           </div>
 
           {!editingUser && (
@@ -259,7 +283,8 @@ const Users = () => {
                 setForm({
                   name: '',
                   email: '',
-                  role: 'Worker',
+                  role: 'worker',
+                  status: 'active',
                   password: ''
                 });
               }} 

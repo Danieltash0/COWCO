@@ -30,7 +30,7 @@ const WorkerDashboard = () => {
         </div>
       
         <div className="dashboard-card">
-          <h3>🐄 Cattle Care</h3>
+          <h3>🐄 Cattle List</h3>
           <p>Access cattle information for feeding, cleaning, and general care tasks. View animal details and care instructions.</p>
           <Link to="/cattle" className="btn btn-primary">View Cattle</Link>
         </div>

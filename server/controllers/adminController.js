@@ -40,7 +40,7 @@ const createUser = async (req, res) => {
       name,
       email,
       password_hash: password || 'default123', // In production, require password
-      role: role.toLowerCase(),
+      role: role,
       status: 'active'
     });
     
@@ -69,6 +69,13 @@ const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, email, role, status, password } = req.body;
     
+    // Validate required fields
+    if (!name || !email || !role || !status) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: name, email, role, and status are required' 
+      });
+    }
+    
     // Check if user exists
     const existingUser = await User.getUserById(id);
     if (!existingUser) {
@@ -77,14 +84,14 @@ const updateUser = async (req, res) => {
     
     // Prepare update data
     const updateData = {
-      name,
-      email,
-      role: role.toLowerCase(),
-      status
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      role: role,
+      status: status.toLowerCase()
     };
     
     // Add password if provided (plain text for now)
-    if (password) {
+    if (password && password.trim()) {
       updateData.password_hash = password;
     }
     

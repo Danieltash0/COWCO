@@ -51,7 +51,7 @@ const Analytics = () => {
     setSubmitting(true);
     
     const result = editingRecord 
-      ? await updateFinancialRecord(editingRecord.id, form)
+      ? await updateFinancialRecord(editingRecord.record_id, form)
       : await addFinancialRecord(form);
     
     setSubmitting(false);
@@ -81,9 +81,9 @@ const Analytics = () => {
       amount: record.amount,
       description: record.description,
       date: record.date,
-      paymentMethod: record.paymentMethod,
-      reference: record.reference,
-      notes: record.notes
+      paymentMethod: record.payment_method || 'cash',
+      reference: record.reference_number || '',
+      notes: record.notes || ''
     });
     setShowModal(true);
   };
@@ -165,19 +165,19 @@ const Analytics = () => {
           <div className="summary-card">
             <h3>Total Revenue</h3>
             <div className="summary-amount green">
-              ${analytics.totalIncome.toLocaleString()}
+              KSHS {analytics.totalIncome.toLocaleString()}
             </div>
           </div>
           <div className="summary-card">
             <h3>Total Expenses</h3>
             <div className="summary-amount red">
-              ${analytics.totalExpenses.toLocaleString()}
+              KSHS {analytics.totalExpenses.toLocaleString()}
             </div>
           </div>
           <div className="summary-card">
             <h3>Net Profit</h3>
             <div className={`summary-amount ${analytics.netProfit >= 0 ? 'green' : 'red'}`}>
-              ${analytics.netProfit.toLocaleString()}
+              KSHS {analytics.netProfit.toLocaleString()}
             </div>
           </div>
           <div className="summary-card">
@@ -236,7 +236,7 @@ const Analytics = () => {
                 </tr>
               ) : (
                 filteredRecords.map(record => (
-                  <tr key={record.id}>
+                  <tr key={record.record_id}>
                     <td>{new Date(record.date).toLocaleDateString()}</td>
                     <td>
                       <span className={`type-badge ${getTypeColor(record.type)}`}>
@@ -246,9 +246,9 @@ const Analytics = () => {
                     <td>{record.category}</td>
                     <td>{record.description}</td>
                     <td className={`amount ${getTypeColor(record.type)}`}>
-                      ${parseFloat(record.amount).toLocaleString()}
+                      KSHS {parseFloat(record.amount).toLocaleString()}
                     </td>
-                    <td>{record.paymentMethod}</td>
+                    <td>{record.payment_method}</td>
                     <td>
                       <span className={`status-badge ${getStatusColor(record.status)}`}>
                         {record.status}
@@ -263,7 +263,7 @@ const Analytics = () => {
                           Edit
                         </button>
                         <button 
-                          onClick={() => handleDelete(record.id)}
+                          onClick={() => handleDelete(record.record_id)}
                           className="btn btn-small btn-danger"
                         >
                           Delete
@@ -278,8 +278,8 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* Charts Section */}
-      {analytics && (
+      {/* Charts Section - Commented Out */}
+      {/* {analytics && (
         <div className="charts-section">
           <h3>Financial Charts</h3>
           <div className="charts-grid">
@@ -289,10 +289,10 @@ const Analytics = () => {
                 <p>Chart showing income vs expenses over time</p>
                 <div className="chart-data">
                   <div className="chart-bar income" style={{height: `${(analytics.totalIncome / (analytics.totalIncome + analytics.totalExpenses)) * 100}%`}}>
-                    Income: ${analytics.totalIncome.toLocaleString()}
+                    Income: KSHS {analytics.totalIncome.toLocaleString()}
                   </div>
                   <div className="chart-bar expense" style={{height: `${(analytics.totalExpenses / (analytics.totalIncome + analytics.totalExpenses)) * 100}%`}}>
-                    Expenses: ${analytics.totalExpenses.toLocaleString()}
+                    Expenses: KSHS {analytics.totalExpenses.toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -306,7 +306,7 @@ const Analytics = () => {
                   {analytics.categoryBreakdown && Object.entries(analytics.categoryBreakdown).map(([category, amount]) => (
                     <div key={category} className="category-item">
                       <span className="category-name">{category}</span>
-                      <span className="category-amount">${amount.toLocaleString()}</span>
+                      <span className="category-amount">KSHS {amount.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
@@ -314,7 +314,7 @@ const Analytics = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Financial Record Modal */}
       <Modal
@@ -398,9 +398,9 @@ const Analytics = () => {
               <select name="paymentMethod" value={form.paymentMethod} onChange={handleChange}>
                 <option value="cash">Cash</option>
                 <option value="bank_transfer">Bank Transfer</option>
+                <option value="mobile_money">Mobile Money</option>
                 <option value="check">Check</option>
                 <option value="credit_card">Credit Card</option>
-                <option value="other">Other</option>
               </select>
             </div>
             <div className="form-group">
@@ -410,7 +410,7 @@ const Analytics = () => {
                 name="reference"
                 value={form.reference}
                 onChange={handleChange}
-                placeholder="Invoice, receipt, or reference number"
+                placeholder="Invoice/Receipt number"
               />
             </div>
           </div>
@@ -421,30 +421,13 @@ const Analytics = () => {
               name="notes"
               value={form.notes}
               onChange={handleChange}
+              placeholder="Additional notes or comments"
               rows="3"
-              placeholder="Additional notes about this financial record..."
             />
           </div>
 
           <div className="form-actions">
-            <button 
-              type="button" 
-              onClick={() => {
-                setShowModal(false);
-                setEditingRecord(null);
-                setForm({
-                  type: 'income',
-                  category: '',
-                  amount: '',
-                  description: '',
-                  date: new Date().toISOString().split('T')[0],
-                  paymentMethod: 'cash',
-                  reference: '',
-                  notes: ''
-                });
-              }} 
-              className="btn btn-secondary"
-            >
+            <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={submitting}>

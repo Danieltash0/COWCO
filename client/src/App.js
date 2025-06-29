@@ -145,7 +145,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/tasks/add" element={
-              <ProtectedRoute allowedRoles={['Farm Manager', 'Worker', 'Admin']}>
+              <ProtectedRoute allowedRoles={['Farm Manager']}>
                 <AddTask />
               </ProtectedRoute>
             } />

@@ -38,11 +38,11 @@ const Tasks = () => {
     }
   };
 
-  const filteredTasks = filter === 'all' 
-    ? tasks 
-    : tasks.filter(task => task.status === filter);
-
   const userTasks = tasks.filter(task => task.assignedTo === user.name);
+
+  const filteredTasks = filter === 'all' 
+    ? (user.role === 'Worker' ? userTasks : tasks)
+    : (user.role === 'Worker' ? userTasks.filter(task => task.status === filter) : tasks.filter(task => task.status === filter));
 
   if (loading) return <Loader />;
   if (error) return <div className="error">Error: {error}</div>;
@@ -52,9 +52,11 @@ const Tasks = () => {
       <div className="content-header">
         <h1 className="content-title">Task Management</h1>
         <div className="content-actions">
-          <button onClick={() => navigate('/tasks/add')} className="btn btn-primary">
-            Add New Task
-          </button>
+          {user.role === 'Farm Manager' && (
+            <button onClick={() => navigate('/tasks/add')} className="btn btn-primary">
+              Add New Task
+            </button>
+          )}
         </div>
       </div>
 
@@ -106,9 +108,11 @@ const Tasks = () => {
           <div className="content-container">
             <div className="text-center">
               <p className="text-gray">No tasks found.</p>
-              <button onClick={() => navigate('/tasks/add')} className="btn btn-primary mt-3">
-                Create Your First Task
-              </button>
+              {user.role === 'Farm Manager' && (
+                <button onClick={() => navigate('/tasks/add')} className="btn btn-primary mt-3">
+                  Create Your First Task
+                </button>
+              )}
             </div>
           </div>
         ) : (
