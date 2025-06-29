@@ -1,255 +1,126 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useReports } from '../../api/useReports';
 import Loader from '../../components/Loader';
-import '../../styles/Reports.module.css';
 
 const Reports = () => {
-  const { reports, loading, error, generateReport, exportReport } = useReports();
-  const [showGenerator, setShowGenerator] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [form, setForm] = useState({
-    title: '',
-    type: 'production',
-    dateRange: 'month'
-  });
+  const { productionSummary, healthSummary, financialSummary, loading, error } = useReports();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  if (loading) {
+    return <Loader />;
+  }
 
-  const handleGenerate = async (e) => {
-    e.preventDefault();
-    setGenerating(true);
-    
-    const result = await generateReport(form);
-    setGenerating(false);
-    
-    if (result.success) {
-      setShowGenerator(false);
-      setForm({
-        title: '',
-        type: 'production',
-        dateRange: 'month'
-      });
-    }
-  };
-
-  const handleExport = async (reportId, format) => {
-    const result = await exportReport(reportId, format);
-    if (result.success) {
-      alert(result.message);
-    } else {
-      alert('Export failed: ' + result.error);
-    }
-  };
-
-  const getReportTypeIcon = (type) => {
-    switch (type) {
-      case 'production': return '🥛';
-      case 'health': return '🏥';
-      case 'financial': return '💰';
-      default: return '📊';
-    }
-  };
-
-  if (loading) return <Loader />;
-  if (error) return <div className="error">Error: {error}</div>;
+  if (error) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>Reports</h2>
+        <p style={{ color: 'red' }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="reports-container">
-      <div className="page-header">
-        <h2>Reports</h2>
-        <button onClick={() => setShowGenerator(true)} className="btn btn-primary">
-          Generate New Report
-        </button>
-      </div>
-
-      <div className="reports-summary">
-        <div className="summary-card">
-          <h3>Total Reports</h3>
-          <div className="summary-count">{reports.length}</div>
-        </div>
-        <div className="summary-card">
-          <h3>Production Reports</h3>
-          <div className="summary-count">
-            {reports.filter(r => r.type === 'production').length}
-          </div>
-        </div>
-        <div className="summary-card">
-          <h3>Health Reports</h3>
-          <div className="summary-count">
-            {reports.filter(r => r.type === 'health').length}
-          </div>
-        </div>
-        <div className="summary-card">
-          <h3>Financial Reports</h3>
-          <div className="summary-count">
-            {reports.filter(r => r.type === 'financial').length}
-          </div>
-        </div>
-      </div>
-
-      <div className="reports-list">
-        {reports.length === 0 ? (
-          <div className="no-reports">
-            <p>No reports found. Generate your first report to get started.</p>
-          </div>
-        ) : (
-          reports.map(report => (
-            <div key={report.id} className="report-card">
-              <div className="report-header">
-                <div className="report-info">
-                  <h3>
-                    {getReportTypeIcon(report.type)} {report.title}
-                  </h3>
-                  <div className="report-meta">
-                    <span className="report-type">{report.type}</span>
-                    <span className="report-date">{report.date}</span>
-                    <span className="report-author">by {report.generatedBy}</span>
-                  </div>
-                </div>
-                <div className="report-actions">
-                  <button 
-                    onClick={() => handleExport(report.id, 'pdf')}
-                    className="btn btn-secondary"
-                  >
-                    Export PDF
-                  </button>
-                  <button 
-                    onClick={() => handleExport(report.id, 'csv')}
-                    className="btn btn-secondary"
-                  >
-                    Export CSV
-                  </button>
-                </div>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ marginBottom: '30px', color: '#333' }}>Farm Reports</h1>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
+        
+        {/* Production Summary */}
+        <div style={{
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          padding: '20px',
+          border: '1px solid #e9ecef'
+        }}>
+          <h2 style={{ color: '#28a745', marginBottom: '15px' }}>Production Summary</h2>
+          {productionSummary && (
+            <div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Total Cattle:</strong> {productionSummary.totalCattle}
               </div>
-
-              <div className="report-content">
-                <div className="report-data">
-                  {report.type === 'production' && (
-                    <div className="data-grid">
-                      <div className="data-item">
-                        <span className="label">Total Milk:</span>
-                        <span className="value">{report.data.totalMilk} L</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Average per Cow:</span>
-                        <span className="value">{report.data.averagePerCow} L</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Top Producer:</span>
-                        <span className="value">{report.data.topProducer}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Total Cattle:</span>
-                        <span className="value">{report.data.totalCattle}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {report.type === 'health' && (
-                    <div className="data-grid">
-                      <div className="data-item">
-                        <span className="label">Total Checkups:</span>
-                        <span className="value">{report.data.totalCheckups}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Vaccinations:</span>
-                        <span className="value">{report.data.vaccinations}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Treatments:</span>
-                        <span className="value">{report.data.treatments}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Healthy Cattle:</span>
-                        <span className="value">{report.data.healthyCattle}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {report.type === 'financial' && (
-                    <div className="data-grid">
-                      <div className="data-item">
-                        <span className="label">Revenue:</span>
-                        <span className="value">${report.data.revenue.toLocaleString()}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Expenses:</span>
-                        <span className="value">${report.data.expenses.toLocaleString()}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Profit:</span>
-                        <span className="value">${report.data.profit.toLocaleString()}</span>
-                      </div>
-                      <div className="data-item">
-                        <span className="label">Profit Margin:</span>
-                        <span className="value">{report.data.profitMargin}%</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Total Milk (30 days):</strong> {productionSummary.totalMilk.toFixed(2)} L
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Average per Cow:</strong> {productionSummary.averagePerCow.toFixed(2)} L
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Milking Sessions:</strong> {productionSummary.milkingSessions}
+              </div>
+              <div>
+                <strong>Top Producer:</strong> {productionSummary.topProducer}
               </div>
             </div>
-          ))
-        )}
-      </div>
-
-      {showGenerator && (
-        <div className="modal-overlay" onClick={() => setShowGenerator(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Generate New Report</h3>
-              <button onClick={() => setShowGenerator(false)} className="modal-close">×</button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleGenerate} className="report-form">
-                <div className="form-group">
-                  <label>Report Title *</label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={form.title}
-                    onChange={handleChange}
-                    placeholder="Enter report title"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Report Type *</label>
-                  <select name="type" value={form.type} onChange={handleChange} required>
-                    <option value="production">Production Report</option>
-                    <option value="health">Health Report</option>
-                    <option value="financial">Financial Report</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Date Range *</label>
-                  <select name="dateRange" value={form.dateRange} onChange={handleChange} required>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                    <option value="quarter">This Quarter</option>
-                    <option value="year">This Year</option>
-                  </select>
-                </div>
-
-                <div className="form-actions">
-                  <button type="button" onClick={() => setShowGenerator(false)} className="btn btn-secondary">
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary" disabled={generating}>
-                    {generating ? 'Generating...' : 'Generate Report'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          )}
         </div>
-      )}
+
+        {/* Health Summary */}
+        <div style={{
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          padding: '20px',
+          border: '1px solid #e9ecef'
+        }}>
+          <h2 style={{ color: '#007bff', marginBottom: '15px' }}>Health Summary</h2>
+          {healthSummary && (
+            <div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Health Checkups (30 days):</strong> {healthSummary.totalCheckups}
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Vaccinations (30 days):</strong> {healthSummary.vaccinations}
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Treatments (30 days):</strong> {healthSummary.treatments}
+              </div>
+              <div>
+                <strong>Healthy Cattle:</strong> {healthSummary.healthyCattle}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Financial Summary */}
+        <div style={{
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          padding: '20px',
+          border: '1px solid #e9ecef'
+        }}>
+          <h2 style={{ color: '#dc3545', marginBottom: '15px' }}>Financial Summary</h2>
+          {financialSummary && (
+            <div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Revenue (30 days):</strong> ${financialSummary.revenue.toFixed(2)}
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Expenses (30 days):</strong> ${financialSummary.expenses.toFixed(2)}
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Profit:</strong> 
+                <span style={{ color: financialSummary.profit >= 0 ? '#28a745' : '#dc3545' }}>
+                  {' '}${financialSummary.profit.toFixed(2)}
+                </span>
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Profit Margin:</strong> {financialSummary.profitMargin}%
+              </div>
+              <div>
+                <strong>Top Expense Categories:</strong>
+                <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+                  {financialSummary.topExpenseCategories.map((category, index) => (
+                    <li key={index}>
+                      {category.category}: ${category.total.toFixed(2)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 };
 
-export default Reports;
+export default Reports; 

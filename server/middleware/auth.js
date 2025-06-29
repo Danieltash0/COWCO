@@ -26,12 +26,6 @@ const requireRole = (allowedRoles) => {
       return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
 
-    console.log('Role check:', { 
-      userRole: req.user.role, 
-      allowedRoles: allowedRoles, 
-      hasPermission: allowedRoles.includes(req.user.role) 
-    });
-
     if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({ 
         error: 'Access denied. Insufficient permissions.',

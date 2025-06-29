@@ -45,19 +45,19 @@ exports.getAnalyticsSummary = async (dateRange = 'month') => {
   
   switch (dateRange) {
     case 'week':
-      dateFilter = 'AND fr.date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
+      dateFilter = 'AND date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
       break;
     case 'month':
-      dateFilter = 'AND fr.date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)';
+      dateFilter = 'AND date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)';
       break;
     case 'quarter':
-      dateFilter = 'AND fr.date >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)';
+      dateFilter = 'AND date >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)';
       break;
     case 'year':
-      dateFilter = 'AND fr.date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)';
+      dateFilter = 'AND date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)';
       break;
     default:
-      dateFilter = 'AND fr.date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)';
+      dateFilter = 'AND date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)';
   }
 
   // Get total income and expenses

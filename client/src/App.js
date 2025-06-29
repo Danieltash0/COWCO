@@ -110,7 +110,7 @@ function App() {
                 <AddCattle />
               </ProtectedRoute>
             } />
-            <Route path="/cattle/edit/:id" element={
+            <Route path="/cattle/:id/edit" element={
               <ProtectedRoute allowedRoles={['Farm Manager', 'Admin']}>
                 <EditCattle />
               </ProtectedRoute>

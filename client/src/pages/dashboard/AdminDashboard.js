@@ -24,7 +24,7 @@ const AdminDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>📊 System Analytics</h3>
+          <h3>📊 Financial Analytics</h3>
           <p>Monitor system performance, user activity, and overall farm operations. View comprehensive analytics and generate system reports.</p>
           <Link to="/analytics" className="btn btn-primary">View Analytics</Link>
         </div>

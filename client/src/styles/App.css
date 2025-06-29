@@ -533,6 +533,17 @@ a:hover {
   border-top: 1px solid var(--light-green);
 }
 
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  margin-top: var(--spacing-lg);
+}
+
+.modal-actions .btn {
+  min-width: 100px;
+}
+
 /* Table Styles */
 table {
   width: 100%;

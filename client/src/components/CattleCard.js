@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const CattleCard = ({ cattle, horizontalBar }) => {
+const CattleCard = ({ cattle, horizontalBar, onEdit, onDelete }) => {
+  const { user } = useAuth();
+  
+  // Check if user has permission to edit/delete (admin or farm manager)
+  const canEditDelete = user && (user.role === 'Admin' || user.role === 'Farm Manager');
+
   const getHealthStatus = (health) => {
     switch (health) {
       case 'Excellent':
@@ -18,6 +24,20 @@ const CattleCard = ({ cattle, horizontalBar }) => {
   };
 
   const healthStatus = getHealthStatus(cattle.health);
+
+  const handleEdit = (e) => {
+    e.preventDefault();
+    if (onEdit) {
+      onEdit(cattle);
+    }
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    if (onDelete) {
+      onDelete(cattle);
+    }
+  };
 
   return (
     <div className={`dashboard-card${horizontalBar ? ' horizontal-bar' : ''}`}>
@@ -48,6 +68,16 @@ const CattleCard = ({ cattle, horizontalBar }) => {
         <Link to={`/cattle/${cattle.cattle_id || cattle.id}/qr`} className="btn btn-secondary">
           QR Code
         </Link>
+        {canEditDelete && (
+          <>
+            <Link to={`/cattle/${cattle.cattle_id || cattle.id}/edit`} className="btn btn-warning">
+              Edit
+            </Link>
+            <button onClick={handleDelete} className="btn btn-danger">
+              Delete
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

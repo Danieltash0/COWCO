@@ -2,18 +2,15 @@ const express = require('express');
 const router = express.Router();
 const reportController = require('../controllers/reportController');
 const { authenticateToken } = require('../middleware/auth');
+const { authorizeRoles } = require('../middleware/roleAuth');
 
-// All report routes require authentication
-router.use(authenticateToken);
+// Get real-time production summary
+router.get('/production-summary', authenticateToken, authorizeRoles(['manager', 'admin']), reportController.getProductionSummary);
 
-// Reports routes
-router.post('/', reportController.createReport);
-router.get('/', reportController.getAllReports);
-router.get('/:id', reportController.getReportById);
-router.delete('/:id', reportController.deleteReport);
-router.post('/:id/export', reportController.exportReport);
+// Get real-time health summary
+router.get('/health-summary', authenticateToken, authorizeRoles(['manager', 'admin']), reportController.getHealthSummary);
 
-// Analytics routes
-router.get('/analytics', reportController.getAnalytics);
+// Get real-time financial summary
+router.get('/financial-summary', authenticateToken, authorizeRoles(['manager', 'admin']), reportController.getFinancialSummary);
 
-module.exports = router;
+module.exports = router; 

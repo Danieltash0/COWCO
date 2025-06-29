@@ -206,5 +206,12 @@ INSERT INTO activity_logs (user_id, action) VALUES
 (1, 'Added financial record: Milk sales'),
 (1, 'Completed task: Clean milking equipment');
 
+-- Insert sample reports
+INSERT INTO reports (title, type, generated_by, data, created_at) VALUES 
+('Monthly Production Report - January 2024', 'production', 1, '{"totalMilk": 2500, "averagePerCow": 833, "topProducer": "Bessie", "totalCattle": 3}', '2024-01-31 10:00:00'),
+('Health Status Report - Q1 2024', 'health', 1, '{"totalCheckups": 5, "vaccinations": 3, "treatments": 2, "healthyCattle": 2}', '2024-01-15 14:30:00'),
+('Financial Summary - January 2024', 'financial', 1, '{"revenue": 5000, "expenses": 2800, "profit": 2200, "profitMargin": 44}', '2024-01-31 16:00:00'),
+('General Farm Report - January 2024', 'general', 1, '{"totalTasks": 6, "completedTasks": 1, "pendingTasks": 5, "completionRate": 17}', '2024-01-31 18:00:00');
+
 -- Verify the database structure
 SHOW TABLES; 
