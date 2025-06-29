@@ -68,10 +68,6 @@ const CattleQR = () => {
               <label>Breed:</label>
               <span>{cattle.breed}</span>
             </div>
-            <div className="info-item">
-              <label>Location:</label>
-              <span>{cattle.location}</span>
-            </div>
           </div>
         </div>
 

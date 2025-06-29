@@ -18,8 +18,8 @@ const WorkerDashboard = () => {
       
       <div className="dashboard-cards">
         <div className="dashboard-card">
-          <h3>📋 Daily Tasks</h3>
-          <p>View and manage your assigned daily tasks, track completion status, and update progress. Stay organized with your farm responsibilities.</p>
+          <h3>📋 Task Management</h3>
+          <p>Access your tasks and checklists. Update task status and view instructions for efficient daily operations.</p>
           <Link to="/tasks" className="btn btn-primary">View Tasks</Link>
         </div>
         
@@ -28,7 +28,7 @@ const WorkerDashboard = () => {
           <p>Complete your daily checklist items, mark tasks as done, and ensure all routine farm operations are completed efficiently.</p>
           <Link to="/tasks/checklist" className="btn btn-primary">Daily Checklist</Link>
         </div>
-        
+      
         <div className="dashboard-card">
           <h3>🐄 Cattle Care</h3>
           <p>Access cattle information for feeding, cleaning, and general care tasks. View animal details and care instructions.</p>
@@ -39,12 +39,6 @@ const WorkerDashboard = () => {
           <h3>🔲 QR Code Scanner</h3>
           <p>Scan QR codes to quickly identify cattle, equipment, and locations. Streamline your daily operations with quick access to information.</p>
           <Link to="/qr-scanner" className="btn btn-primary">Scan QR Codes</Link>
-        </div>
-        
-        <div className="dashboard-card">
-          <h3>📱 Mobile Tasks</h3>
-          <p>Access your tasks and checklists on mobile devices while working in the field. Update task status and view instructions on the go.</p>
-          <Link to="/tasks" className="btn btn-primary">Mobile Tasks</Link>
         </div>
         
         <div className="dashboard-card">

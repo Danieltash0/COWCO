@@ -116,7 +116,6 @@ const QRGenerator = ({ cattleId, onClose }) => {
             <p><strong>Tag Number:</strong> {selectedCattle.tag_number}</p>
             <p><strong>Name:</strong> {selectedCattle.name || 'Unnamed'}</p>
             <p><strong>Breed:</strong> {selectedCattle.breed || 'Unknown'}</p>
-            <p><strong>Age:</strong> {selectedCattle.age || 'Unknown'} years</p>
           </div>
         )}
 

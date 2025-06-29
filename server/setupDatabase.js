@@ -43,7 +43,6 @@ async function setupDatabase() {
         tag_number VARCHAR(50) UNIQUE NOT NULL,
         name VARCHAR(100),
         breed VARCHAR(100),
-        age INT,
         added_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (added_by) REFERENCES users(user_id) ON DELETE SET NULL
@@ -146,12 +145,12 @@ async function setupDatabase() {
     const [cattle] = await connection.execute('SELECT COUNT(*) as count FROM cattle');
     if (cattle[0].count === 0) {
       await connection.execute(
-        'INSERT INTO cattle (tag_number, name, breed, age, added_by) VALUES (?, ?, ?, ?, ?)',
-        ['COW001', 'Bessie', 'Holstein', 3, 1]
+        'INSERT INTO cattle (tag_number, name, breed, added_by) VALUES (?, ?, ?, ?)',
+        ['COW001', 'Bessie', 'Holstein', 1]
       );
       await connection.execute(
-        'INSERT INTO cattle (tag_number, name, breed, age, added_by) VALUES (?, ?, ?, ?, ?)',
-        ['COW002', 'Daisy', 'Jersey', 2, 1]
+        'INSERT INTO cattle (tag_number, name, breed, added_by) VALUES (?, ?, ?, ?)',
+        ['COW002', 'Daisy', 'Jersey', 1]
       );
       console.log('Test cattle data inserted');
     }

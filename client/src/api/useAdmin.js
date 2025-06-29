@@ -4,6 +4,8 @@ import { apiRequest, getAuthHeaders } from './config';
 export const useAdmin = () => {
   const [users, setUsers] = useState([]);
   const [logs, setLogs] = useState([]);
+  const [loginLogs, setLoginLogs] = useState([]);
+  const [logStats, setLogStats] = useState({});
   const [settings, setSettings] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,18 +17,34 @@ export const useAdmin = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [usersResponse, logsResponse, settingsResponse] = await Promise.all([
+      setError(null);
+      
+      console.log('Fetching admin data...');
+      
+      const [usersResponse, logsResponse, loginLogsResponse, logStatsResponse, settingsResponse] = await Promise.all([
         apiRequest('/admin/users', { headers: getAuthHeaders() }),
         apiRequest('/admin/logs', { headers: getAuthHeaders() }),
+        apiRequest('/admin/logs/login', { headers: getAuthHeaders() }),
+        apiRequest('/admin/logs/stats', { headers: getAuthHeaders() }),
         apiRequest('/admin/settings', { headers: getAuthHeaders() })
       ]);
       
+      console.log('Admin data fetched successfully:', {
+        users: usersResponse.length,
+        logs: logsResponse.length,
+        loginLogs: loginLogsResponse.length,
+        logStats: logStatsResponse,
+        settings: settingsResponse
+      });
+      
       setUsers(usersResponse);
       setLogs(logsResponse);
+      setLoginLogs(loginLogsResponse);
+      setLogStats(logStatsResponse);
       setSettings(settingsResponse);
     } catch (err) {
-      setError('Failed to fetch admin data');
       console.error('Error fetching admin data:', err);
+      setError(`Failed to fetch admin data: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -132,11 +150,34 @@ export const useAdmin = () => {
     }
   };
 
-  const getLogsByDateRange = (startDate, endDate) => {
-    return logs.filter(log => {
-      const logDate = new Date(log.timestamp);
-      return logDate >= new Date(startDate) && logDate <= new Date(endDate);
-    });
+  const getLogsByDateRange = async (startDate, endDate) => {
+    try {
+      const response = await apiRequest(`/admin/logs?startDate=${startDate}&endDate=${endDate}`, {
+        headers: getAuthHeaders(),
+      });
+      return response;
+    } catch (error) {
+      console.error('Error fetching date range logs:', error);
+      return [];
+    }
+  };
+
+  const clearOldLogs = async (daysOld = 30) => {
+    try {
+      const response = await apiRequest(`/admin/logs/clear?daysOld=${daysOld}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      
+      if (response.success) {
+        // Refresh the logs
+        await fetchData();
+      }
+      
+      return response;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
   };
 
   // Settings management functions
@@ -177,9 +218,14 @@ export const useAdmin = () => {
     }
   };
 
-  const exportLogs = async (format = 'csv') => {
+  const exportLogs = async (format = 'csv', startDate, endDate) => {
     try {
-      const response = await apiRequest(`/admin/logs/export?format=${format}`, {
+      let url = `/admin/logs/export?format=${format}`;
+      if (startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+      
+      const response = await apiRequest(url, {
         headers: getAuthHeaders(),
       });
       
@@ -205,6 +251,8 @@ export const useAdmin = () => {
   return {
     users,
     logs,
+    loginLogs,
+    logStats,
     settings,
     loading,
     error,
@@ -215,6 +263,7 @@ export const useAdmin = () => {
     getLogsByUser,
     getLogsByAction,
     getLogsByDateRange,
+    clearOldLogs,
     updateSettings,
     exportLogs,
     refreshData: fetchData

@@ -30,7 +30,7 @@ const CattleCard = ({ cattle, horizontalBar }) => {
       <div className="cattle-info">
         <div className="info-row">
           <span className="label">ID tag:</span>
-          <span className="value">{cattle.cattle_id || cattle.id}</span>
+          <span className="value">{cattle.tag_number || cattle.cattle_id || cattle.id}</span>
         </div>
         <div className="info-row">
           <span className="label">Name:</span>

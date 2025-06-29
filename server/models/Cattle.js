@@ -13,12 +13,11 @@ exports.createCattle = async (cattle) => {
     gender: cattle.gender || 'Female',
     date_of_birth: cattle.date_of_birth || null,
     notes: cattle.notes || null,
-    age: cattle.age || null,
     added_by: cattle.added_by || 1 // Default to admin user
   };
 
   const [result] = await db.execute(
-    'INSERT INTO cattle (tag_number, name, breed, health, gender, date_of_birth, notes, age, added_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO cattle (tag_number, name, breed, health, gender, date_of_birth, notes, added_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
     [
       cattleData.tag_number,
       cattleData.name,
@@ -27,7 +26,6 @@ exports.createCattle = async (cattle) => {
       cattleData.gender,
       cattleData.date_of_birth,
       cattleData.notes,
-      cattleData.age,
       cattleData.added_by
     ]
   );
@@ -35,12 +33,12 @@ exports.createCattle = async (cattle) => {
 };
 
 exports.getAllCattle = async () => {
-  const [rows] = await db.execute('SELECT * FROM cattle');
+  const [rows] = await db.execute('SELECT cattle_id, tag_number, name, breed, health, gender, date_of_birth, notes, added_by, created_at FROM cattle');
   return rows;
 };
 
 exports.getCattleById = async (id) => {
-  const [rows] = await db.execute('SELECT * FROM cattle WHERE cattle_id = ?', [id]);
+  const [rows] = await db.execute('SELECT cattle_id, tag_number, name, breed, health, gender, date_of_birth, notes, added_by, created_at FROM cattle WHERE cattle_id = ?', [id]);
   return rows[0];
 };
 
@@ -53,12 +51,11 @@ exports.updateCattle = async (id, cattle) => {
     health: cattle.health || 'Good',
     gender: cattle.gender || 'Female',
     date_of_birth: cattle.date_of_birth || null,
-    notes: cattle.notes || null,
-    age: cattle.age || null
+    notes: cattle.notes || null
   };
 
   await db.execute(
-    'UPDATE cattle SET tag_number=?, name=?, breed=?, health=?, gender=?, date_of_birth=?, notes=?, age=? WHERE cattle_id=?',
+    'UPDATE cattle SET tag_number=?, name=?, breed=?, health=?, gender=?, date_of_birth=?, notes=? WHERE cattle_id=?',
     [
       cattleData.tag_number,
       cattleData.name,
@@ -67,7 +64,6 @@ exports.updateCattle = async (id, cattle) => {
       cattleData.gender,
       cattleData.date_of_birth,
       cattleData.notes,
-      cattleData.age,
       id
     ]
   );

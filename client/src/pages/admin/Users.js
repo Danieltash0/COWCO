@@ -144,11 +144,11 @@ const Users = () => {
                 </td>
                 <td>
                   {user.lastLogin 
-                    ? new Date(user.lastLogin).toLocaleDateString()
+                    ? new Date(user.lastLogin).toLocaleString()
                     : 'Never'
                   }
                 </td>
-                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td>{new Date(user.createdAt).toLocaleString()}</td>
                 <td>
                   <div className="action-buttons">
                     <button 

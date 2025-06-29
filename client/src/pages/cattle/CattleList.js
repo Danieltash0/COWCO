@@ -11,7 +11,7 @@ const CattleList = () => {
 
   const filteredCattle = cattle.filter(cow => {
     const matchesSearch = cow.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         cow.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         cow.tag_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          cow.breed?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesHealth = healthFilter === 'all' || cow.health === healthFilter;
     return matchesSearch && matchesHealth;
@@ -38,7 +38,7 @@ const CattleList = () => {
             <input
               id="search"
               type="text"
-              placeholder="Search by name, ID, or breed..."
+              placeholder="Search by name, tag number, or breed..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

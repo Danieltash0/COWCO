@@ -102,10 +102,13 @@ const EditCattle = () => {
             <label>Breed *</label>
             <select name="breed" value={form.breed} onChange={handleChange} required>
               <option value="">Select Breed</option>
+              <option value="Fresian">Fresian</option>
               <option value="Holstein">Holstein</option>
               <option value="Jersey">Jersey</option>
+              <option value="Brown Swiss">Brown Swiss</option>
               <option value="Angus">Angus</option>
               <option value="Hereford">Hereford</option>
+              <option value="Galloway">Galloway</option>
               <option value="Brahman">Brahman</option>
             </select>
           </div>

@@ -25,8 +25,8 @@ const VetDashboard = () => {
         
         <div className="dashboard-card">
           <h3>📋 Health Records</h3>
-          <p>Manage detailed health records for all cattle, including medical history, treatments, vaccinations, and health assessments.</p>
-          <Link to="/health-records" className="btn btn-primary">Health Records</Link>
+          <p>Access cattle health information and medical records. Update records and view patient data for comprehensive health management.</p>
+          <Link to="/health-records" className="btn btn-primary">View Records</Link>
         </div>
         
         <div className="dashboard-card">
@@ -45,12 +45,6 @@ const VetDashboard = () => {
           <h3>🔲 QR Code Scanner</h3>
           <p>Scan QR codes to quickly access individual cattle health records and medical history. Efficient patient information retrieval.</p>
           <Link to="/qr-scanner" className="btn btn-primary">Scan QR Codes</Link>
-        </div>
-        
-        <div className="dashboard-card">
-          <h3>📱 Mobile Access</h3>
-          <p>Access cattle health information on mobile devices for field work. Update records and view patient data anywhere on the farm.</p>
-          <Link to="/health-records" className="btn btn-primary">Mobile Access</Link>
         </div>
       </div>
     </div>

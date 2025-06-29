@@ -48,7 +48,7 @@ const ManagerDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>📱 QR Code Scanner</h3>
+          <h3>🔍 QR Code Scanner</h3>
           <p>Scan QR codes to quickly access cattle information, equipment details, and inventory data. Fast and efficient data retrieval.</p>
           <Link to="/qr-scanner" className="btn btn-primary">Scan QR Codes</Link>
         </div>

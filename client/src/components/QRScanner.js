@@ -82,7 +82,6 @@ const QRScanner = ({ onClose, onScan }) => {
               <p><strong>Tag Number:</strong> {result.cattle.tag_number}</p>
               <p><strong>Name:</strong> {result.cattle.name || 'Unnamed'}</p>
               <p><strong>Breed:</strong> {result.cattle.breed || 'Unknown'}</p>
-              <p><strong>Age:</strong> {result.cattle.age || 'Unknown'} years</p>
             </div>
             <div className={styles.actions}>
               <button 
@@ -101,10 +100,10 @@ const QRScanner = ({ onClose, onScan }) => {
           </div>
         )}
 
-        {!result && !error && (
+        {!result && (
           <div className={styles.scannerContainer}>
             <div className={styles.manualInput}>
-              <h3>Manual QR Code Input</h3>
+              <h3>QR Code Input</h3>
               <p>Enter the QR code data manually:</p>
               
               <form onSubmit={handleManualScan} className={styles.inputForm}>

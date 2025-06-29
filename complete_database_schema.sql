@@ -1,14 +1,20 @@
 -- Complete Database Schema for CowCo Cattle Management System
 -- This schema includes all tables with updated columns for frontend form support
 
--- Users Table
+-- Users Table (Updated with status and last_login tracking)
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     role ENUM('manager', 'vet', 'worker', 'admin') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    last_login TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_users_status (status),
+    INDEX idx_users_role (role),
+    INDEX idx_users_last_login (last_login)
 );
 
 -- Cattle Table (Updated with frontend form fields)
@@ -21,7 +27,6 @@ CREATE TABLE cattle (
     gender ENUM('Female', 'Male') DEFAULT 'Female',
     date_of_birth DATE NULL,
     notes TEXT NULL,
-    age INT,
     added_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (added_by) REFERENCES users(user_id) ON DELETE SET NULL,
@@ -138,13 +143,19 @@ CREATE TABLE reports (
     FOREIGN KEY (generated_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
--- Activity Logs Table
+-- Activity Logs Table (Enhanced for better tracking)
 CREATE TABLE activity_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    action TEXT,
+    action VARCHAR(100) NOT NULL,
+    description TEXT,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+    INDEX idx_activity_logs_user_id (user_id),
+    INDEX idx_activity_logs_action (action),
+    INDEX idx_activity_logs_timestamp (timestamp)
 );
 
 -- Insert default admin user
@@ -152,10 +163,10 @@ INSERT INTO users (name, email, password_hash, role) VALUES
 ('Admin User', 'admin@cowco.com', 'admin123', 'admin');
 
 -- Insert sample cattle data
-INSERT INTO cattle (tag_number, name, breed, health, gender, date_of_birth, notes, age, added_by) VALUES 
-('CT001', 'Bessie', 'Holstein', 'Good', 'Female', '2020-03-15', 'Friendly cow, good milk producer', 3, 1),
-('CT002', 'Daisy', 'Jersey', 'Excellent', 'Female', '2019-07-22', 'High butterfat content', 4, 1),
-('CT003', 'Molly', 'Angus', 'Fair', 'Female', '2021-01-10', 'Young heifer, growing well', 2, 1);
+INSERT INTO cattle (tag_number, name, breed, health, gender, date_of_birth, notes, added_by) VALUES 
+('CT001', 'Bessie', 'Holstein', 'Good', 'Female', '2020-03-15', 'Friendly cow, good milk producer', 1),
+('CT002', 'Daisy', 'Jersey', 'Excellent', 'Female', '2019-07-22', 'High butterfat content', 1),
+('CT003', 'Molly', 'Angus', 'Fair', 'Female', '2021-01-10', 'Young heifer, growing well', 1);
 
 -- Insert sample financial records
 INSERT INTO financial_records (type, category, amount, payment_method, description, date, created_by) VALUES 

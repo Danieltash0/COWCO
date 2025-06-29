@@ -94,18 +94,10 @@ const CattleProfile = () => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Date of Birth</label>
-                    <p>{cattleData.date_of_birth}</p>
-                  </div>
-                  <div className="form-group">
-                    <label>Weight</label>
-                    <p>{cattleData.weight} kg</p>
+                    <p>{cattleData.date_of_birth ? new Date(cattleData.date_of_birth).toLocaleDateString() : 'Not specified'}</p>
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="form-group">
-                    <label>Location</label>
-                    <p>{cattleData.location}</p>
-                  </div>
                   <div className="form-group">
                     <label>Health Status</label>
                     <p>{cattleData.health}</p>
