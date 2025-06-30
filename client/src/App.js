@@ -27,6 +27,7 @@ import CattleQR from './pages/cattle/CattleQR';
 // Vet Pages
 import HealthRecords from './pages/vet/HealthRecords';
 import HealthAlerts from './pages/vet/HealthAlerts';
+import Appointments from './pages/vet/Appointments';
 
 // Task Pages
 import Tasks from './pages/tasks/Tasks';
@@ -138,6 +139,11 @@ function App() {
             <Route path="/health-alerts" element={
               <ProtectedRoute allowedRoles={['Veterinarian', 'Admin']}>
                 <HealthAlerts />
+              </ProtectedRoute>
+            } />
+            <Route path="/appointments" element={
+              <ProtectedRoute allowedRoles={['Veterinarian', 'Admin', 'Farm Manager']}>
+                <Appointments />
               </ProtectedRoute>
             } />
 

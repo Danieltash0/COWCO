@@ -55,7 +55,7 @@ CREATE TABLE health_records (
     cattle_id INT,
     vet_id INT,
     treatment TEXT,
-    vaccination TEXT,
+    medical_procedure TEXT,
     diagnosis TEXT,
     record_date DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
@@ -77,17 +77,6 @@ CREATE TABLE health_alerts (
     INDEX idx_health_alerts_due_date (due_date),
     INDEX idx_health_alerts_priority (priority),
     INDEX idx_health_alerts_status (status)
-);
-
--- Cattle Events Table (for breeding, milking, feeding, financial)
-CREATE TABLE cattle_events (
-    event_id INT AUTO_INCREMENT PRIMARY KEY,
-    cattle_id INT,
-    event_type ENUM('breeding', 'milking', 'feeding', 'financial'),
-    description TEXT,
-    amount DECIMAL(10, 2),
-    event_date DATE DEFAULT CURRENT_DATE,
-    FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE
 );
 
 -- Financial Records Table (New table for analytics)
@@ -193,18 +182,18 @@ INSERT INTO tasks (title, description, assigned_to, assigned_by, priority, categ
 ('Feed cattle in Barn A', 'Ensure all cattle in Barn A receive their daily feed ration', 1, 1, 'high', 'feeding', 'pending', '2024-01-20', FALSE),
 ('Check water troughs', 'Inspect and clean water troughs in all barns', 1, 1, 'medium', 'cleaning', 'pending', '2024-01-19', FALSE),
 ('Clean milking equipment', 'Thoroughly clean and sanitize all milking equipment', 1, 1, 'high', 'cleaning', 'completed', '2024-01-18', TRUE),
-('Vaccinate cattle', 'Administer annual vaccinations to all cattle', 1, 1, 'high', 'health', 'pending', '2024-01-25', FALSE),
+('Medical procedure for cattle', 'Administer annual medical procedures to all cattle', 1, 1, 'high', 'health', 'pending', '2024-01-25', FALSE),
 ('Repair fence', 'Fix broken sections of the perimeter fence', 1, 1, 'medium', 'maintenance', 'pending', '2024-01-22', FALSE),
 ('Transport cattle', 'Move cattle from Barn A to pasture', 1, 1, 'low', 'transport', 'pending', '2024-01-23', FALSE);
 
 -- Insert sample health records
-INSERT INTO health_records (cattle_id, vet_id, treatment, vaccination, diagnosis, record_date) VALUES 
-(1, 1, 'Routine checkup completed', 'Annual vaccination', 'Healthy', '2024-01-15'),
+INSERT INTO health_records (cattle_id, vet_id, treatment, medical_procedure, diagnosis, record_date) VALUES 
+(1, 1, 'Routine checkup completed', 'Annual medical procedure', 'Healthy', '2024-01-15'),
 (2, 1, 'Hoof trimming', 'None', 'Minor hoof issue resolved', '2024-01-10');
 
 -- Insert sample health alerts
 INSERT INTO health_alerts (cattle_id, type, description, due_date, priority, status) VALUES 
-(1, 'vaccination', 'Annual vaccination due', '2024-02-15', 'medium', 'pending'),
+(1, 'medical_procedure', 'Annual medical procedure due', '2024-02-15', 'medium', 'pending'),
 (2, 'checkup', 'Routine health check', '2024-01-25', 'low', 'pending'),
 (3, 'treatment', 'Follow-up for leg injury', '2024-01-20', 'high', 'pending');
 
@@ -223,7 +212,7 @@ INSERT INTO activity_logs (user_id, action) VALUES
 -- Insert sample reports
 INSERT INTO reports (title, type, generated_by, data, created_at) VALUES 
 ('Monthly Production Report - January 2024', 'production', 1, '{"totalMilk": 2500, "averagePerCow": 833, "topProducer": "Bessie", "totalCattle": 3}', '2024-01-31 10:00:00'),
-('Health Status Report - Q1 2024', 'health', 1, '{"totalCheckups": 5, "vaccinations": 3, "treatments": 2, "healthyCattle": 2}', '2024-01-15 14:30:00'),
+('Health Status Report - Q1 2024', 'health', 1, '{"totalCheckups": 5, "medical_procedures": 3, "treatments": 2, "healthyCattle": 2}', '2024-01-15 14:30:00'),
 ('Financial Summary - January 2024', 'financial', 1, '{"revenue": 5000, "expenses": 2800, "profit": 2200, "profitMargin": 44}', '2024-01-31 16:00:00'),
 ('General Farm Report - January 2024', 'general', 1, '{"totalTasks": 6, "completedTasks": 1, "pendingTasks": 5, "completionRate": 17}', '2024-01-31 18:00:00');
 

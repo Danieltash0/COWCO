@@ -2,8 +2,8 @@ const db = require('../utils/database');
 
 exports.createHealthRecord = async (record) => {
   const [result] = await db.execute(
-    'INSERT INTO health_records (cattle_id, vet_id, treatment, vaccination, diagnosis, record_date) VALUES (?, ?, ?, ?, ?, ?)',
-    [record.cattle_id, record.vet_id, record.treatment, record.vaccination, record.diagnosis, record.record_date]
+    'INSERT INTO health_records (cattle_id, vet_id, treatment, medical_procedure, diagnosis, record_date) VALUES (?, ?, ?, ?, ?, ?)',
+    [record.cattle_id, record.vet_id, record.treatment, record.medical_procedure, record.diagnosis, record.record_date]
   );
   return result.insertId;
 };
@@ -32,8 +32,8 @@ exports.getHealthRecordById = async (id) => {
 
 exports.updateHealthRecord = async (id, record) => {
   await db.execute(
-    'UPDATE health_records SET cattle_id=?, vet_id=?, treatment=?, vaccination=?, diagnosis=?, record_date=? WHERE record_id=?',
-    [record.cattle_id, record.vet_id, record.treatment, record.vaccination, record.diagnosis, record.record_date, id]
+    'UPDATE health_records SET cattle_id=?, vet_id=?, treatment=?, medical_procedure=?, diagnosis=?, record_date=? WHERE record_id=?',
+    [record.cattle_id, record.vet_id, record.treatment, record.medical_procedure, record.diagnosis, record.record_date, id]
   );
 };
 

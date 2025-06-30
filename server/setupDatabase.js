@@ -53,21 +53,11 @@ async function setupDatabase() {
         cattle_id INT,
         vet_id INT,
         treatment TEXT,
-        vaccination TEXT,
+        medical_procedure TEXT,
         diagnosis TEXT,
         record_date DATE DEFAULT CURRENT_DATE,
         FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
         FOREIGN KEY (vet_id) REFERENCES users(user_id) ON DELETE SET NULL
-      )`,
-      
-      `CREATE TABLE IF NOT EXISTS cattle_events (
-        event_id INT AUTO_INCREMENT PRIMARY KEY,
-        cattle_id INT,
-        event_type ENUM('breeding', 'milking', 'feeding', 'financial'),
-        description TEXT,
-        amount DECIMAL(10, 2),
-        event_date DATE DEFAULT CURRENT_DATE,
-        FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE
       )`,
       
       `CREATE TABLE IF NOT EXISTS tasks (

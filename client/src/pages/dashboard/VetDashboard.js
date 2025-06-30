@@ -19,7 +19,7 @@ const VetDashboard = () => {
       <div className="dashboard-cards">
         <div className="dashboard-card">
           <h3>🐄 Cattle Health</h3>
-          <p>Access comprehensive cattle health records, vaccination history, and medical treatments. Monitor animal wellness and track health trends.</p>
+          <p>Access comprehensive cattle health records, medical procedure history, and medical treatments. Monitor animal wellness and track health trends.</p>
           <Link to="/cattle" className="btn btn-primary">View Cattle</Link>
         </div>
         
@@ -36,9 +36,9 @@ const VetDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>📊 Health Analytics</h3>
-          <p>Analyze health trends, disease patterns, and treatment effectiveness. Generate health reports and track wellness metrics.</p>
-          <Link to="/analytics" className="btn btn-primary">Health Analytics</Link>
+          <h3>📅 Scheduled Appointments</h3>
+          <p>View and manage upcoming health appointments for cattle. Schedule new appointments and review details.</p>
+          <Link to="/appointments" className="btn btn-primary">View Appointments</Link>
         </div>
         
         <div className="dashboard-card">

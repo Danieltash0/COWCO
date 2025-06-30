@@ -53,30 +53,17 @@ const Reports = () => {
           )}
         </div>
 
-        {/* Health Summary */}
+        {/* Scheduled Appointments (replaces Health Summary) */}
         <div style={{
           backgroundColor: '#f8f9fa',
           borderRadius: '8px',
           padding: '20px',
           border: '1px solid #e9ecef'
         }}>
-          <h2 style={{ color: '#007bff', marginBottom: '15px' }}>Health Summary</h2>
-          {healthSummary && (
-            <div>
-              <div style={{ marginBottom: '10px' }}>
-                <strong>Health Checkups (30 days):</strong> {healthSummary.totalCheckups}
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <strong>Vaccinations (30 days):</strong> {healthSummary.vaccinations}
-              </div>
-              <div style={{ marginBottom: '10px' }}>
-                <strong>Treatments (30 days):</strong> {healthSummary.treatments}
-              </div>
-              <div>
-                <strong>Healthy Cattle:</strong> {healthSummary.healthyCattle}
-              </div>
-            </div>
-          )}
+          <h2 style={{ color: '#007bff', marginBottom: '15px' }}>Scheduled Appointments</h2>
+          <div>
+            <p>View and manage upcoming health appointments for cattle. (See Vet Dashboard for full details.)</p>
+          </div>
         </div>
 
         {/* Financial Summary */}

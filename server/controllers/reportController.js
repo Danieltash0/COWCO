@@ -53,11 +53,11 @@ exports.getHealthSummary = async (req, res) => {
       WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     `);
 
-    // Get vaccinations count
-    const [vaccinationResult] = await db.execute(`
+    // Get medical procedures count (Vaccination)
+    const [procedureResult] = await db.execute(`
       SELECT COUNT(*) as vaccinations
       FROM health_records 
-      WHERE vaccination IS NOT NULL AND vaccination != ''
+      WHERE medical_procedure = 'Vaccination'
       AND record_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     `);
 
@@ -78,7 +78,7 @@ exports.getHealthSummary = async (req, res) => {
 
     res.json({
       totalCheckups: healthResult[0].totalCheckups,
-      vaccinations: vaccinationResult[0].vaccinations,
+      vaccinations: procedureResult[0].vaccinations,
       treatments: treatmentResult[0].treatments,
       healthyCattle: healthyResult[0].healthyCattle
     });

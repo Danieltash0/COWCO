@@ -24,7 +24,7 @@ async function addSampleReports() {
         generated_by: 1,
         data: JSON.stringify({
           totalCheckups: 5,
-          vaccinations: 3,
+          medical_procedures: 3,
           treatments: 2,
           healthyCattle: 2
         }),

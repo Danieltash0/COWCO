@@ -81,7 +81,7 @@ exports.getHealthAlerts = async (req, res) => {
       SELECT ha.id, ha.cattle_id, c.name as cattle_name, ha.type, ha.description, 
              ha.due_date, ha.priority, ha.status, ha.created_at
       FROM health_alerts ha
-      LEFT JOIN cattle c ON ha.cattle_id = c.id
+      LEFT JOIN cattle c ON ha.cattle_id = c.cattle_id
       ORDER BY ha.due_date ASC
     `);
     
@@ -110,7 +110,7 @@ exports.getHealthAlertById = async (req, res) => {
       SELECT ha.id, ha.cattle_id, c.name as cattle_name, ha.type, ha.description, 
              ha.due_date, ha.priority, ha.status, ha.created_at
       FROM health_alerts ha
-      LEFT JOIN cattle c ON ha.cattle_id = c.id
+      LEFT JOIN cattle c ON ha.cattle_id = c.cattle_id
       WHERE ha.id = ?
     `, [req.params.id]);
     

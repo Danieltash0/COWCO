@@ -29,12 +29,20 @@ export const useVet = () => {
     }
   };
 
+  // Utility to convert undefined values to null
+  const sanitizeRecordData = (data) =>
+    Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [k, v === undefined ? null : v])
+    );
+
   const addHealthRecord = async (recordData) => {
     try {
+      const sanitized = sanitizeRecordData(recordData);
+      console.log('Submitting health record:', sanitized);
       const response = await apiRequest('/vet/health-records', {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(recordData),
+        body: JSON.stringify(sanitized),
       });
       
       // Refresh the data
