@@ -7,21 +7,21 @@ exports.getProductionSummary = async (req, res) => {
     const [cattleResult] = await db.execute('SELECT COUNT(*) as total FROM cattle WHERE gender = "Female"');
     const totalCattle = cattleResult[0].total;
 
-    // Get milking events
+    // Get milking records (last 30 days)
     const [milkingResult] = await db.execute(`
       SELECT COALESCE(SUM(amount), 0) as totalMilk, 
-             COALESCE(AVG(amount), 0) as averagePerCow,
+             COALESCE(AVG(amount), 0) as averagePerSession,
              COUNT(*) as milkingSessions
-      FROM cattle_events 
-      WHERE event_type = 'milking' 
-      AND event_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+      FROM milking_records
+      WHERE milking_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     `);
 
-    // Get top producer
+    // Get top producer (last 30 days)
     const [topProducerResult] = await db.execute(`
-      SELECT c.name, COALESCE(SUM(ce.amount), 0) as totalMilk
+      SELECT c.name, COALESCE(SUM(mr.amount), 0) as totalMilk
       FROM cattle c
-      LEFT JOIN cattle_events ce ON c.cattle_id = ce.cattle_id AND ce.event_type = 'milking'
+      LEFT JOIN milking_records mr ON c.cattle_id = mr.cattle_id
+        AND mr.milking_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
       WHERE c.gender = 'Female'
       GROUP BY c.cattle_id, c.name
       ORDER BY totalMilk DESC
@@ -33,7 +33,7 @@ exports.getProductionSummary = async (req, res) => {
     res.json({
       totalCattle,
       totalMilk: parseFloat(milkingResult[0].totalMilk),
-      averagePerCow: parseFloat(milkingResult[0].averagePerCow),
+      averagePerSession: parseFloat(milkingResult[0].averagePerSession),
       topProducer,
       milkingSessions: milkingResult[0].milkingSessions
     });

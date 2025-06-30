@@ -6,14 +6,6 @@ const WorkerDashboard = () => {
     <div className="dashboard-container">
       <div className="content-header">
         <h1 className="content-title">Worker Dashboard</h1>
-        <div className="content-actions">
-          <Link to="/tasks" className="btn btn-primary">
-            View Tasks
-          </Link>
-          <Link to="/tasks/checklist" className="btn btn-secondary">
-            Daily Checklist
-          </Link>
-        </div>
       </div>
       
       <div className="dashboard-cards">
@@ -21,12 +13,6 @@ const WorkerDashboard = () => {
           <h3>📋 Task Management</h3>
           <p>Access your tasks and checklists. Update task status and view instructions for efficient daily operations.</p>
           <Link to="/tasks" className="btn btn-primary">View Tasks</Link>
-        </div>
-        
-        <div className="dashboard-card">
-          <h3>✅ Daily Checklist</h3>
-          <p>Complete your daily checklist items, mark tasks as done, and ensure all routine farm operations are completed efficiently.</p>
-          <Link to="/tasks/checklist" className="btn btn-primary">Daily Checklist</Link>
         </div>
       
         <div className="dashboard-card">

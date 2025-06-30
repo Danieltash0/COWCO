@@ -126,11 +126,7 @@ const CameraQRScanner = ({ onClose, onScan }) => {
 
         {!showCattleModal && !error && (
           <div className={styles.scannerContainer}>
-            <div className={styles.cameraContainer}>
-              <h3>Scan QR Code</h3>
-              <p>Position the QR code within the camera view</p>
-              <div id="qr-reader" className={styles.qrReader}></div>
-            </div>
+            <div id="qr-reader" className={styles.qrReader}></div>
           </div>
         )}
 

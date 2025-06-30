@@ -122,6 +122,19 @@ async function setupDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL
+      )`,
+      
+      `CREATE TABLE IF NOT EXISTS milking_records (
+        record_id INT AUTO_INCREMENT PRIMARY KEY,
+        cattle_id INT NOT NULL,
+        amount DECIMAL(8,2) NOT NULL,
+        session_type ENUM('morning', 'afternoon', 'evening') NOT NULL DEFAULT 'morning',
+        milking_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        notes TEXT,
+        recorded_by INT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+        FOREIGN KEY (recorded_by) REFERENCES users(user_id) ON DELETE SET NULL
       )`
     ];
 

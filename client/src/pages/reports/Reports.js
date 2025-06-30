@@ -35,19 +35,19 @@ const Reports = () => {
           {productionSummary && (
             <div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Total Cattle:</strong> {productionSummary.totalCattle}
+                <strong>Total Cows:</strong> {productionSummary.totalCattle}
               </div>
               <div style={{ marginBottom: '10px' }}>
                 <strong>Total Milk (30 days):</strong> {Number(productionSummary.totalMilk).toFixed(2)} L
               </div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Average per Cow:</strong> {Number(productionSummary.averagePerCow).toFixed(2)} L
+                <strong>Average per Session:</strong> {Number(productionSummary.averagePerSession).toFixed(2)} L
               </div>
               <div style={{ marginBottom: '10px' }}>
                 <strong>Milking Sessions:</strong> {productionSummary.milkingSessions}
               </div>
               <div>
-                <strong>Top Producer:</strong> {productionSummary.topProducer}
+                <strong>Top Producer (Cow):</strong> {productionSummary.topProducer}
               </div>
             </div>
           )}
