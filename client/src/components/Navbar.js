@@ -52,9 +52,15 @@ const Navbar = () => {
 
         {/* Bottom row with navigation menu */}
         <div className={styles.navMenu}>
-          <Link to="/cattle" className={styles.navLink}>
-            Cattle
-          </Link>
+          {user?.role === 'Veterinarian' ? (
+            <Link to="/appointments" className={styles.navLink}>
+              Appointments
+            </Link>
+          ) : (
+            <Link to="/cattle" className={styles.navLink}>
+              Cattle
+            </Link>
+          )}
           
           {user?.role === 'Veterinarian' && (
             <>

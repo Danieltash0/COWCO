@@ -38,7 +38,6 @@ export const useVet = () => {
   const addHealthRecord = async (recordData) => {
     try {
       const sanitized = sanitizeRecordData(recordData);
-      console.log('Submitting health record:', sanitized);
       const response = await apiRequest('/vet/health-records', {
         method: 'POST',
         headers: getAuthHeaders(),

@@ -70,7 +70,6 @@ exports.createHealthAlert = async (req, res) => {
     
     res.status(201).json({ alert_id: result.insertId, message: 'Health alert created successfully' });
   } catch (err) {
-    console.error('Error creating health alert:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -99,7 +98,6 @@ exports.getHealthAlerts = async (req, res) => {
     
     res.json(alerts);
   } catch (err) {
-    console.error('Error fetching health alerts:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -132,7 +130,6 @@ exports.getHealthAlertById = async (req, res) => {
     
     res.json(alert);
   } catch (err) {
-    console.error('Error fetching health alert:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -152,7 +149,6 @@ exports.updateHealthAlert = async (req, res) => {
     
     res.json({ message: 'Health alert updated successfully' });
   } catch (err) {
-    console.error('Error updating health alert:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -170,7 +166,6 @@ exports.deleteHealthAlert = async (req, res) => {
     
     res.json({ message: 'Health alert deleted successfully' });
   } catch (err) {
-    console.error('Error deleting health alert:', err);
     res.status(500).json({ error: err.message });
   }
 };
