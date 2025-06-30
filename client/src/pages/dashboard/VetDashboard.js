@@ -22,12 +22,6 @@ const VetDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>⚠️ Health Alerts</h3>
-          <p>Monitor health alerts, urgent cases, and critical health issues. Stay informed about animals requiring immediate attention.</p>
-          <Link to="/health-alerts" className="btn btn-primary">View Alerts</Link>
-        </div>
-
-        <div className="dashboard-card">
           <h3>🐄 Cattle Health</h3>
           <p>Access comprehensive cattle health records, medical procedure history, and medical treatments. Monitor animal wellness and track health trends.</p>
           <Link to="/cattle" className="btn btn-primary">View Cattle</Link>

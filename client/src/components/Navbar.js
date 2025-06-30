@@ -67,9 +67,6 @@ const Navbar = () => {
               <Link to="/health-records" className={styles.navLink}>
                 Health Records
               </Link>
-              <Link to="/health-alerts" className={styles.navLink}>
-                Health Alerts
-              </Link>
             </>
           )}
 
