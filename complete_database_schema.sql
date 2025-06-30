@@ -144,6 +144,19 @@ CREATE TABLE activity_logs (
     INDEX idx_activity_logs_timestamp (timestamp)
 );
 
+-- Health Appointments Table
+CREATE TABLE IF NOT EXISTS health_appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    cattle_id INT,
+    vet_id INT,
+    appointment_date DATE NOT NULL,
+    reason VARCHAR(255),
+    status ENUM('scheduled', 'completed', 'cancelled') DEFAULT 'scheduled',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+    FOREIGN KEY (vet_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
 -- Insert default admin user
 INSERT INTO users (name, email, password_hash, role) VALUES 
 ('Admin User', 'admin@cowco.com', 'admin123', 'admin');

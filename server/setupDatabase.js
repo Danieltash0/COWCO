@@ -125,6 +125,18 @@ async function setupDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
         FOREIGN KEY (recorded_by) REFERENCES users(user_id) ON DELETE SET NULL
+      )`,
+      
+      `CREATE TABLE IF NOT EXISTS health_appointments (
+        appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+        cattle_id INT,
+        vet_id INT,
+        appointment_date DATE NOT NULL,
+        reason VARCHAR(255),
+        status ENUM('scheduled', 'completed', 'cancelled') DEFAULT 'scheduled',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (cattle_id) REFERENCES cattle(cattle_id) ON DELETE CASCADE,
+        FOREIGN KEY (vet_id) REFERENCES users(user_id) ON DELETE SET NULL
       )`
     ];
 

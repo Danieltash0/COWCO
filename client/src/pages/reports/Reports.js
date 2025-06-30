@@ -53,17 +53,32 @@ const Reports = () => {
           )}
         </div>
 
-        {/* Scheduled Appointments (replaces Health Summary) */}
+        {/* Medical Summary (was Scheduled Appointments) */}
         <div style={{
           backgroundColor: '#f8f9fa',
           borderRadius: '8px',
           padding: '20px',
           border: '1px solid #e9ecef'
         }}>
-          <h2 style={{ color: '#007bff', marginBottom: '15px' }}>Scheduled Appointments</h2>
-          <div>
-            <p>View and manage upcoming health appointments for cattle. (See Vet Dashboard for full details.)</p>
-          </div>
+          <h2 style={{ color: '#007bff', marginBottom: '15px' }}>Medical Summary</h2>
+          {healthSummary && (
+            <div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Cattle by Health Status:</strong>
+                <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+                  {healthSummary.healthStatusCounts && healthSummary.healthStatusCounts.map((row, idx) => (
+                    <li key={idx}>{row.health}: {row.count}</li>
+                  ))}
+                </ul>
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Number of Appointments:</strong> {healthSummary.totalAppointments}
+              </div>
+              <div>
+                <strong>Number of Veterinarians:</strong> {healthSummary.vetCount}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Financial Summary */}

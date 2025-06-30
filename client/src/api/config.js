@@ -34,7 +34,6 @@ export const apiRequest = async (endpoint, options = {}) => {
     
     return await response.json();
   } catch (error) {
-    console.error('API Request Error:', error);
     throw error;
   }
 };

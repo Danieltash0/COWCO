@@ -38,7 +38,6 @@ exports.getProductionSummary = async (req, res) => {
       milkingSessions: milkingResult[0].milkingSessions
     });
   } catch (error) {
-    console.error('Error getting production summary:', error);
     res.status(500).json({ error: 'Failed to fetch production summary' });
   }
 };
@@ -46,45 +45,33 @@ exports.getProductionSummary = async (req, res) => {
 // Get real-time health summary
 exports.getHealthSummary = async (req, res) => {
   try {
-    // Get total health records
-    const [healthResult] = await db.execute(`
-      SELECT COUNT(*) as totalCheckups
-      FROM health_records 
-      WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    // Number of cattle for each health status
+    const [statusCounts] = await db.execute(`
+      SELECT health, COUNT(*) as count
+      FROM cattle
+      GROUP BY health
     `);
 
-    // Get medical procedures count (Vaccination)
-    const [procedureResult] = await db.execute(`
-      SELECT COUNT(*) as vaccinations
-      FROM health_records 
-      WHERE medical_procedure = 'Vaccination'
-      AND record_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    // Number of appointments
+    const [appointmentsResult] = await db.execute(`
+      SELECT COUNT(*) as totalAppointments
+      FROM health_appointments
     `);
 
-    // Get treatments count
-    const [treatmentResult] = await db.execute(`
-      SELECT COUNT(*) as treatments
-      FROM health_records 
-      WHERE treatment IS NOT NULL AND treatment != ''
-      AND record_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-    `);
-
-    // Get healthy cattle count
-    const [healthyResult] = await db.execute(`
-      SELECT COUNT(*) as healthyCattle
-      FROM cattle 
-      WHERE health IN ('Excellent', 'Good')
+    // Number of users with vet role
+    const [vetCountResult] = await db.execute(`
+      SELECT COUNT(*) as vetCount
+      FROM users
+      WHERE role = 'vet' OR role = 'Veterinarian'
     `);
 
     res.json({
-      totalCheckups: healthResult[0].totalCheckups,
-      vaccinations: procedureResult[0].vaccinations,
-      treatments: treatmentResult[0].treatments,
-      healthyCattle: healthyResult[0].healthyCattle
+      healthStatusCounts: statusCounts,
+      totalAppointments: appointmentsResult[0].totalAppointments,
+      vetCount: vetCountResult[0].vetCount
     });
   } catch (error) {
-    console.error('Error getting health summary:', error);
-    res.status(500).json({ error: 'Failed to fetch health summary' });
+    res.status(500).json({ error: 'Failed to fetch medical summary' });
   }
 };
 
@@ -130,7 +117,6 @@ exports.getFinancialSummary = async (req, res) => {
       topExpenseCategories: categoryResult
     });
   } catch (error) {
-    console.error('Error getting financial summary:', error);
     res.status(500).json({ error: 'Failed to fetch financial summary' });
   }
 }; 

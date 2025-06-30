@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiRequest } from './config';
+import { apiRequest, getAuthHeaders } from './config';
 
 export const useReports = () => {
   const [productionSummary, setProductionSummary] = useState(null);
@@ -14,16 +14,15 @@ export const useReports = () => {
       setError(null);
 
       const [production, health, financial] = await Promise.all([
-        apiRequest('/reports/production-summary'),
-        apiRequest('/reports/health-summary'),
-        apiRequest('/reports/financial-summary')
+        apiRequest('/reports/production-summary', { headers: getAuthHeaders() }),
+        apiRequest('/reports/health-summary', { headers: getAuthHeaders() }),
+        apiRequest('/reports/financial-summary', { headers: getAuthHeaders() })
       ]);
 
       setProductionSummary(production);
       setHealthSummary(health);
       setFinancialSummary(financial);
     } catch (err) {
-      console.error('Error fetching reports:', err);
       setError('Failed to fetch reports data');
     } finally {
       setLoading(false);
