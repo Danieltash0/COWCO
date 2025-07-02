@@ -17,6 +17,17 @@ const Users = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  const roleMap = {
+    'Admin': 'admin',
+    'Farm Manager': 'manager',
+    'Veterinarian': 'vet',
+    'Worker': 'worker',
+    'admin': 'admin',
+    'manager': 'manager',
+    'vet': 'vet',
+    'worker': 'worker'
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -24,13 +35,11 @@ const Users = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    
+    const formToSend = { ...form, role: roleMap[form.role] || form.role };
     const result = editingUser 
-      ? await updateUser(editingUser.id, form)
-      : await addUser(form);
-    
+      ? await updateUser(editingUser.id, formToSend)
+      : await addUser(formToSend);
     setSubmitting(false);
-    
     if (result.success) {
       setShowModal(false);
       setEditingUser(null);
@@ -49,7 +58,7 @@ const Users = () => {
     setForm({
       name: user.name,
       email: user.email,
-      role: user.role,
+      role: roleMap[user.role] || user.role,
       status: user.status,
       password: ''
     });
@@ -97,9 +106,6 @@ const Users = () => {
     <div className="users-container">
       <div className="page-header">
         <h2>User Management</h2>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          Add New User
-        </button>
       </div>
 
       <div className="users-summary">
@@ -122,7 +128,7 @@ const Users = () => {
         <div className="summary-card">
           <h3>Admins</h3>
           <div className="summary-count">
-            {users.filter(u => u.role === 'admin').length}
+            {users.filter(u => (u.role || '').toLowerCase() === 'admin').length}
           </div>
         </div>
       </div>
@@ -190,6 +196,12 @@ const Users = () => {
         </table>
       </div>
 
+      <div style={{ marginTop: '24px', textAlign: 'right' }}>
+        <button onClick={() => setShowModal(true)} className="btn btn-primary">
+          Add New User
+        </button>
+      </div>
+
       <Modal
         isOpen={showModal}
         onClose={() => {
@@ -233,6 +245,7 @@ const Users = () => {
             <div className="form-group">
               <label>Role *</label>
               <select name="role" value={form.role} onChange={handleChange} required>
+                <option value="" disabled>Select a Role</option>
                 <option value="worker">Worker</option>
                 <option value="vet">Veterinarian</option>
                 <option value="manager">Farm Manager</option>

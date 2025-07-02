@@ -1,5 +1,4 @@
 -- Complete Database Schema for CowCo Cattle Management System
--- This schema includes all tables with updated columns for frontend form support
 
 -- Users Table (Updated with status and last_login tracking)
 CREATE TABLE users (

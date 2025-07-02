@@ -153,9 +153,6 @@ const Analytics = () => {
           <button onClick={handleExport} className="btn btn-secondary">
             Export Report
           </button>
-          <button onClick={() => setShowModal(true)} className="btn btn-primary">
-            Add Financial Record
-          </button>
         </div>
       </div>
 
@@ -275,6 +272,11 @@ const Analytics = () => {
               )}
             </tbody>
           </table>
+        </div>
+        <div style={{ marginTop: '24px', textAlign: 'right' }}>
+          <button onClick={() => setShowModal(true)} className="btn btn-primary">
+            Add Financial Record
+          </button>
         </div>
       </div>
 

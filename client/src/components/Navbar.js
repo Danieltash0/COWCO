@@ -88,7 +88,7 @@ const Navbar = () => {
                 Reports
               </Link>
               <Link to="/analytics" className={styles.navLink}>
-                Analytics
+                Finances
               </Link>
             </>
           )}
@@ -107,12 +107,6 @@ const Navbar = () => {
             <>
               <Link to="/users" className={styles.navLink}>
                 Users
-              </Link>
-              <Link to="/logs" className={styles.navLink}>
-                Logs
-              </Link>
-              <Link to="/settings" className={styles.navLink}>
-                Settings
               </Link>
             </>
           )}
