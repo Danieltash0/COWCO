@@ -1047,3 +1047,7 @@
     padding: var(--spacing-md);
   }
 }
+
+#qr-reader video {
+  transform: scaleX(-1) !important;
+}

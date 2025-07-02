@@ -68,8 +68,8 @@ const QRGenerator = ({ cattleId, onClose }) => {
 
   const handleSelectCattle = (e) => {
     const id = parseInt(e.target.value);
-    const cattle = cattle.find(c => c.cattle_id === id);
-    setSelectedCattle(cattle);
+    const selected = cattle.find(c => c.cattle_id === id);
+    setSelectedCattle(selected);
     setQrData(null);
     
     if (id) {

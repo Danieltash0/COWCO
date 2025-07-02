@@ -36,9 +36,9 @@ const AdminDashboard = () => {
         </div>
         
         <div className="dashboard-card">
-          <h3>⚙️ System Settings</h3>
-          <p>Configure system-wide settings and preferences.</p>
-          <Link to="/settings" className="btn btn-primary">System Settings</Link>
+          <h3>🔲 QR Code Generator</h3>
+          <p>Create QR codes for cattle and easy data attainment. Streamline your identification process.</p>
+          <Link to="/qr-generator" className="btn btn-primary">Generate QR Codes</Link>
         </div>
         
         <div className="dashboard-card">

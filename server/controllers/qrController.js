@@ -14,11 +14,7 @@ exports.generateQRCode = async (req, res) => {
     // Check if QR code already exists for this cattle
     const existingQR = await QRCode.getQRCodeByCattleId(cattle_id);
     if (existingQR) {
-      return res.json({ 
-        qr_id: existingQR.qr_id, 
-        qr_data: existingQR.qr_data,
-        message: 'QR code already exists for this cattle' 
-      });
+      await QRCode.deleteQRCodeByCattleId(cattle_id);
     }
     
     // Generate QR data (cattle profile URL)
@@ -91,6 +87,7 @@ exports.deleteQRCode = async (req, res) => {
 exports.scanQRCode = async (req, res) => {
   try {
     const { qr_data } = req.body;
+    console.log('Received qr_data:', qr_data);
     
     if (!qr_data) {
       return res.status(400).json({ error: 'QR data is required' });

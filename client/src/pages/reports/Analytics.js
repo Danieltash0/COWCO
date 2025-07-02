@@ -203,6 +203,7 @@ const Analytics = () => {
             <option value="month">This Month</option>
             <option value="quarter">This Quarter</option>
             <option value="year">This Year</option>
+            <option value="all">All Time</option>
           </select>
         </div>
       </div>

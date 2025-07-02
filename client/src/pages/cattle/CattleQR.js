@@ -1,94 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useCattle } from '../../api/useCattle';
+import QRCode from 'qrcode.react';
+import { useQR } from '../../api/useQR';
 import Loader from '../../components/Loader';
 import '../../styles/QR.module.css';
 
 const CattleQR = () => {
   const { id } = useParams();
-  const { getCattleById } = useCattle();
-  const [cattle, setCattle] = useState(null);
+  const { getQRCodeByCattleId, generateQRCode } = useQR();
+  const [qrData, setQrData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    const fetchCattle = () => {
-      const cattleData = getCattleById(id);
-      if (cattleData) {
-        setCattle(cattleData);
+    const fetchQR = async () => {
+      setLoading(true);
+      setError('');
+      const result = await getQRCodeByCattleId(id);
+      if (result.success && result.qr_code && result.qr_code.qr_data) {
+        setQrData(result.qr_code.qr_data);
       } else {
-        setError('Cattle not found');
+        setQrData(null);
       }
       setLoading(false);
     };
+    fetchQR();
+  }, [id]);
 
-    fetchCattle();
-  }, [id, getCattleById]);
-
-  const generateQRCode = () => {
-    // This would typically use a QR code library like qrcode.react
-    // For now, we'll create a simple placeholder
-    const qrData = `${window.location.origin}/cattle/${id}`;
-    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+  const handleGenerateQR = async () => {
+    setGenerating(true);
+    setError('');
+    const result = await generateQRCode(id);
+    if (result.success) {
+      setQrData(result.qr_data);
+    } else {
+      setError(result.error || 'Failed to generate QR code');
+    }
+    setGenerating(false);
   };
 
-  const downloadQR = () => {
-    const link = document.createElement('a');
-    link.href = generateQRCode();
-    link.download = `qr-${cattle.id}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownloadQR = () => {
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      const link = document.createElement('a');
+      link.download = `qr-cattle-${id}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
   };
 
   if (loading) return <Loader />;
   if (error) return <div className="error">Error: {error}</div>;
-  if (!cattle) return <div className="error">Cattle not found</div>;
 
   return (
     <div className="qr-container">
       <div className="qr-header">
-        <h2>QR Code for {cattle.name}</h2>
+        <h2>Cattle QR Code</h2>
         <Link to={`/cattle/${id}`} className="btn btn-secondary">Back to Profile</Link>
       </div>
-
       <div className="qr-content">
-        <div className="qr-info">
-          <h3>Cattle Information</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <label>ID:</label>
-              <span>{cattle.id}</span>
-            </div>
-            <div className="info-item">
-              <label>Name:</label>
-              <span>{cattle.name}</span>
-            </div>
-            <div className="info-item">
-              <label>Breed:</label>
-              <span>{cattle.breed}</span>
-            </div>
-          </div>
-        </div>
-
         <div className="qr-display">
           <h3>QR Code</h3>
           <div className="qr-code-container">
-            <img 
-              src={generateQRCode()} 
-              alt={`QR Code for ${cattle.name}`}
-              className="qr-code"
-            />
+            {qrData ? (
+              <QRCode value={qrData} size={200} level="H" includeMargin={true} />
+            ) : (
+              <p>No QR code found for this cattle.</p>
+            )}
           </div>
-          <p className="qr-description">
-            Scan this QR code to quickly access {cattle.name}'s profile
-          </p>
-          <button onClick={downloadQR} className="btn btn-primary">
-            Download QR Code
+          {qrData && (
+            <button onClick={handleDownloadQR} className="btn btn-primary" style={{marginRight: '1rem'}}>
+              Download QR Code
+            </button>
+          )}
+          <button onClick={handleGenerateQR} className="btn btn-secondary" disabled={generating}>
+            {qrData ? (generating ? 'Regenerating...' : 'Regenerate QR Code') : (generating ? 'Generating...' : 'Generate QR Code')}
           </button>
         </div>
       </div>
-
       <div className="qr-instructions">
         <h3>Instructions</h3>
         <ul>
