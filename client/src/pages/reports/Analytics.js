@@ -3,6 +3,8 @@ import { useAnalytics } from '../../api/useAnalytics';
 import Modal from '../../components/Modal';
 import Loader from '../../components/Loader';
 import '../../styles/Analytics.module.css';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const Analytics = () => {
   const { 
@@ -99,6 +101,58 @@ const Analytics = () => {
     await exportFinancialReport(dateRange);
   };
 
+  const handleExportPDF = () => {
+    if (!analytics) return;
+    const doc = new jsPDF();
+    let y = 10;
+    doc.setFontSize(18);
+    doc.text('Financial Analytics Summary', 10, y);
+    y += 10;
+    doc.setFontSize(14);
+    doc.text('Summary', 10, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.text(`Total Revenue: KSHS ${analytics.totalIncome?.toLocaleString() ?? ''}`, 12, y += 7);
+    doc.text(`Total Expenses: KSHS ${analytics.totalExpenses?.toLocaleString() ?? ''}`, 12, y += 7);
+    doc.text(`Net Profit: KSHS ${analytics.netProfit?.toLocaleString() ?? ''}`, 12, y += 7);
+    doc.text(`Profit Margin: ${analytics.profitMargin?.toFixed(1) ?? ''}%`, 12, y += 7);
+    y += 10;
+    doc.setFontSize(14);
+    doc.text('Financial Records', 10, y);
+    y += 4;
+    doc.setFontSize(11);
+    if (filteredRecords.length === 0) {
+      doc.text('No financial records found for the selected filters.', 12, y + 7);
+    } else {
+      autoTable(doc, {
+        startY: y + 4,
+        head: [[
+          'Date',
+          'Type',
+          'Category',
+          'Description',
+          'Amount',
+          'Payment Method',
+          'Status',
+        ]],
+        body: filteredRecords.map(record => [
+          new Date(record.date).toLocaleDateString(),
+          record.type,
+          record.category,
+          record.description,
+          `KSHS ${parseFloat(record.amount).toLocaleString()}`,
+          record.payment_method,
+          record.status,
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [0, 123, 255] },
+        margin: { left: 10, right: 10 },
+        theme: 'grid',
+      });
+    }
+    doc.save('Financial_Analytics_Summary.pdf');
+  };
+
   const getCategoryOptions = (type) => {
     if (type === 'income') {
       return [
@@ -150,8 +204,8 @@ const Analytics = () => {
       <div className="page-header">
         <h2>Financial Analytics</h2>
         <div className="header-actions">
-          <button onClick={handleExport} className="btn btn-secondary">
-            Export Report
+          <button onClick={handleExportPDF} className="btn btn-primary">
+            Export Financial Data (PDF)
           </button>
         </div>
       </div>

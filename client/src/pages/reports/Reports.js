@@ -72,7 +72,7 @@ const Reports = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ marginBottom: '30px', color: '#333' }}>Farm Reports</h1>
-      <button onClick={handleExportPDF} style={{ marginBottom: '20px', padding: '8px 16px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+      <button onClick={handleExportPDF} className="btn btn-primary">
         Export Summary Report (PDF)
       </button>
       
