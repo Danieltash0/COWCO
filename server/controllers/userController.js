@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { hashPassword } = require('../utils/bcrypt');
 
 // Role mapping from frontend to database
 const roleMapping = {
@@ -15,7 +16,8 @@ exports.signup = async (req, res) => {
     // Map frontend role to database role
     const dbRole = roleMapping[role] || 'worker'; // Default to worker if role not found
     
-    const password_hash = password; // Store password as plain text
+    // Hash the password before storing
+    const password_hash = await hashPassword(password);
     const userId = await User.createUser({ name, email, password_hash, role: dbRole });
     res.status(201).json({ userId });
   } catch (err) {

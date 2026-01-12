@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const ActivityLog = require('../models/ActivityLog');
+const { hashPassword } = require('../utils/bcrypt');
 
-// Role mapping from database to frontend
 const roleMapping = {
   'manager': 'Farm Manager',
   'vet': 'Veterinarian',
@@ -9,7 +9,6 @@ const roleMapping = {
   'admin': 'Admin'
 };
 
-// User Management
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.getAllUsers();
@@ -40,22 +39,21 @@ const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     
-    // Check if user already exists
     const existingUser = await User.getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: 'User with this email already exists' });
     }
     
-    // Create new user with plain text password (in production, use proper hashing)
+    // Hash the password before storing
+    const hashedPassword = await hashPassword(password || 'default123');
     const userId = await User.createUser({
       name,
       email,
-      password_hash: password || 'default123', // In production, require password
+      password_hash: hashedPassword,
       role: role,
       status: 'active'
     });
     
-    // Log the activity
     await ActivityLog.createLog({
       user_id: req.user.userId,
       action: 'user_create',
@@ -80,20 +78,17 @@ const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, email, role, status, password } = req.body;
     
-    // Validate required fields
     if (!name || !email || !role || !status) {
       return res.status(400).json({ 
         error: 'Missing required fields: name, email, role, and status are required' 
       });
     }
     
-    // Check if user exists
     const existingUser = await User.getUserById(id);
     if (!existingUser) {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Prepare update data
     const updateData = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -101,9 +96,9 @@ const updateUser = async (req, res) => {
       status: status.toLowerCase()
     };
     
-    // Add password if provided (plain text for now)
     if (password && password.trim()) {
-      updateData.password_hash = password;
+      // Hash the new password before updating
+      updateData.password_hash = await hashPassword(password);
     }
     
     const success = await User.updateUser(id, updateData);
@@ -112,7 +107,6 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Log the activity
     await ActivityLog.createLog({
       user_id: req.user.userId,
       action: 'user_update',
@@ -132,13 +126,11 @@ const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Get user info for logging
     const user = await User.getUserById(id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Prevent admin from deleting themselves
     if (parseInt(id) === req.user.userId) {
       return res.status(400).json({ error: 'Cannot delete your own account' });
     }
@@ -149,7 +141,6 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Log the activity
     await ActivityLog.createLog({
       user_id: req.user.userId,
       action: 'user_delete',
@@ -169,13 +160,11 @@ const toggleUserStatus = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Get current user status
     const user = await User.getUserById(id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Prevent admin from deactivating themselves
     if (parseInt(id) === req.user.userId) {
       return res.status(400).json({ error: 'Cannot deactivate your own account' });
     }
@@ -188,7 +177,6 @@ const toggleUserStatus = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Log the activity
     await ActivityLog.createLog({
       user_id: req.user.userId,
       action: 'user_status_toggle',
@@ -204,22 +192,18 @@ const toggleUserStatus = async (req, res) => {
   }
 };
 
-// Activity Logs
 const getActivityLogs = async (req, res) => {
   try {
-    const { limit = 100, offset = 0, action, userId, startDate, endDate } = req.query;
+    const { page = 1, limit = 50, user_id, action, start_date, end_date } = req.query;
     
-    let logs;
-    
-    if (action) {
-      logs = await ActivityLog.getLogsByAction(action, parseInt(limit));
-    } else if (userId) {
-      logs = await ActivityLog.getLogsByUser(userId, parseInt(limit));
-    } else if (startDate && endDate) {
-      logs = await ActivityLog.getLogsByDateRange(startDate, endDate, parseInt(limit));
-    } else {
-      logs = await ActivityLog.getLogs(parseInt(limit), parseInt(offset));
-    }
+    const logs = await ActivityLog.getLogs({
+      page: parseInt(page),
+      limit: parseInt(limit),
+      user_id: user_id ? parseInt(user_id) : null,
+      action,
+      start_date,
+      end_date
+    });
     
     res.json(logs);
   } catch (error) {
@@ -230,8 +214,7 @@ const getActivityLogs = async (req, res) => {
 
 const getLoginLogs = async (req, res) => {
   try {
-    const { limit = 50 } = req.query;
-    const logs = await ActivityLog.getLoginLogs(parseInt(limit));
+    const logs = await ActivityLog.getLogsByAction('login');
     res.json(logs);
   } catch (error) {
     console.error('Error fetching login logs:', error);
@@ -242,9 +225,7 @@ const getLoginLogs = async (req, res) => {
 const getLogsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { limit = 50 } = req.query;
-    
-    const logs = await ActivityLog.getLogsByUser(userId, parseInt(limit));
+    const logs = await ActivityLog.getLogsByUser(parseInt(userId));
     res.json(logs);
   } catch (error) {
     console.error('Error fetching user logs:', error);
@@ -255,9 +236,7 @@ const getLogsByUser = async (req, res) => {
 const getLogsByAction = async (req, res) => {
   try {
     const { action } = req.params;
-    const { limit = 50 } = req.query;
-    
-    const logs = await ActivityLog.getLogsByAction(action, parseInt(limit));
+    const logs = await ActivityLog.getLogsByAction(action);
     res.json(logs);
   } catch (error) {
     console.error('Error fetching action logs:', error);
@@ -278,21 +257,21 @@ const getLogStats = async (req, res) => {
 const clearOldLogs = async (req, res) => {
   try {
     const { daysOld = 30 } = req.query;
+    
     const deletedCount = await ActivityLog.clearOldLogs(parseInt(daysOld));
     
-    // Log the activity
     await ActivityLog.createLog({
       user_id: req.user.userId,
       action: 'logs_clear',
-      description: `Cleared ${deletedCount} old logs (older than ${daysOld} days)`,
+      description: `Cleared ${deletedCount} logs older than ${daysOld} days`,
       ip_address: req.ip || req.connection.remoteAddress,
       user_agent: req.get('User-Agent')
     });
     
     res.json({ 
       success: true, 
-      deletedCount, 
-      message: `Cleared ${deletedCount} old logs` 
+      message: `Cleared ${deletedCount} old logs`,
+      deletedCount 
     });
   } catch (error) {
     console.error('Error clearing old logs:', error);
@@ -302,26 +281,21 @@ const clearOldLogs = async (req, res) => {
 
 const exportLogs = async (req, res) => {
   try {
-    const { format = 'csv', startDate, endDate } = req.query;
+    const { format = 'csv', start_date, end_date } = req.query;
     
-    let logs;
-    if (startDate && endDate) {
-      logs = await ActivityLog.getLogsByDateRange(startDate, endDate, 1000);
-    } else {
-      logs = await ActivityLog.getLogs(1000, 0);
-    }
+    const logs = await ActivityLog.getAllLogs({ start_date, end_date });
     
     if (format === 'csv') {
-      const csvData = logs.map(log => 
-        `${log.log_id},${log.user_name || 'System'},${log.action},${log.description || ''},${log.timestamp},${log.ip_address || ''}`
-      ).join('\n');
+      const csvHeaders = 'Timestamp,User,Action,Description,IP Address\n';
+      const csvRows = logs.map(log => {
+        return `${log.timestamp},${log.user_name || 'Unknown'},${log.action},"${log.description || ''}",${log.ip_address || ''}`;
+      }).join('\n');
       
-      const csvHeader = 'ID,User,Action,Description,Timestamp,IP Address\n';
-      const fullCsv = csvHeader + csvData;
+      const csvContent = csvHeaders + csvRows;
       
       res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename=activity-logs-${new Date().toISOString().split('T')[0]}.csv`);
-      res.send(fullCsv);
+      res.setHeader('Content-Disposition', `attachment; filename="activity-logs-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send(csvContent);
     } else {
       res.json(logs);
     }
@@ -331,17 +305,20 @@ const exportLogs = async (req, res) => {
   }
 };
 
-// Settings management
 const getSettings = async (req, res) => {
   try {
-    // In a real app, you would fetch from a settings table
     const settings = {
       systemName: 'CowCo Cattle Management System',
       version: '1.0.0',
-      logRetentionDays: 30,
+      maintenanceMode: false,
       maxLoginAttempts: 5,
       sessionTimeout: 24,
-      maintenanceMode: false
+      backupFrequency: 'daily',
+      notificationSettings: {
+        email: true,
+        sms: false,
+        push: false
+      }
     };
     
     res.json(settings);
@@ -355,14 +332,10 @@ const updateSettings = async (req, res) => {
   try {
     const newSettings = req.body;
     
-    // In a real app, you would update a settings table
-    // For now, just return success
-    
-    // Log the activity
     await ActivityLog.createLog({
       user_id: req.user.userId,
       action: 'settings_update',
-      description: 'Updated system settings',
+      description: 'System settings updated',
       ip_address: req.ip || req.connection.remoteAddress,
       user_agent: req.get('User-Agent')
     });
@@ -374,34 +347,30 @@ const updateSettings = async (req, res) => {
   }
 };
 
-// Helper function
 const getPermissionsByRole = (role) => {
   switch (role) {
-    case 'manager':
+    case 'Farm Manager':
       return ['cattle', 'tasks', 'reports', 'analytics'];
-    case 'vet':
+    case 'Veterinarian':
       return ['cattle', 'health-records', 'health-alerts'];
-    case 'worker':
+    case 'Worker':
       return ['cattle', 'tasks', 'checklist'];
-    case 'admin':
+    case 'Admin':
       return ['all'];
     default:
       return [];
   }
 };
 
-// Debug function to check user role
 const debugUserRole = async (req, res) => {
   try {
-    const user = await User.getUserById(req.user.userId);
     res.json({
-      jwtUser: req.user,
-      dbUser: user,
-      message: 'User information from JWT and database'
+      user: req.user,
+      role: req.user.role,
+      permissions: getPermissionsByRole(req.user.role)
     });
   } catch (error) {
-    console.error('Error fetching user for debug:', error);
-    res.status(500).json({ error: 'Failed to fetch user information' });
+    res.status(500).json({ error: 'Failed to get user role info' });
   }
 };
 

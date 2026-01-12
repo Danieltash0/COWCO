@@ -7,8 +7,7 @@ import logo from '../../assets/logo.png.png';
 const roles = [
   'Farm Manager',
   'Veterinarian',
-  'Worker',
-  'Admin'
+  'Worker'
 ];
 
 const Signup = () => {

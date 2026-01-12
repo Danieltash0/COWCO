@@ -9,14 +9,43 @@ exports.createLog = async (logData) => {
   return result.insertId;
 };
 
-exports.getLogs = async (limit = 100, offset = 0) => {
-  const [rows] = await pool.execute(`
+exports.getLogs = async (options = {}) => {
+  const { page = 1, limit = 50, user_id, action, start_date, end_date } = options;
+  const offset = (page - 1) * limit;
+  
+  let query = `
     SELECT al.*, u.name as user_name, u.email as user_email
     FROM activity_logs al
     LEFT JOIN users u ON al.user_id = u.user_id
-    ORDER BY al.timestamp DESC
-    LIMIT ? OFFSET ?
-  `, [limit, offset]);
+    WHERE 1=1
+  `;
+  
+  const params = [];
+  
+  if (user_id) {
+    query += ' AND al.user_id = ?';
+    params.push(user_id);
+  }
+  
+  if (action) {
+    query += ' AND al.action = ?';
+    params.push(action);
+  }
+  
+  if (start_date) {
+    query += ' AND DATE(al.timestamp) >= ?';
+    params.push(start_date);
+  }
+  
+  if (end_date) {
+    query += ' AND DATE(al.timestamp) <= ?';
+    params.push(end_date);
+  }
+  
+  query += ' ORDER BY al.timestamp DESC LIMIT ? OFFSET ?';
+  params.push(limit, offset);
+  
+  const [rows] = await pool.execute(query, params);
   return rows;
 };
 
@@ -74,6 +103,34 @@ exports.clearOldLogs = async (daysOld = 30) => {
     [daysOld]
   );
   return result.affectedRows;
+};
+
+exports.getAllLogs = async (options = {}) => {
+  const { start_date, end_date } = options;
+  
+  let query = `
+    SELECT al.*, u.name as user_name, u.email as user_email
+    FROM activity_logs al
+    LEFT JOIN users u ON al.user_id = u.user_id
+    WHERE 1=1
+  `;
+  
+  const params = [];
+  
+  if (start_date) {
+    query += ' AND DATE(al.timestamp) >= ?';
+    params.push(start_date);
+  }
+  
+  if (end_date) {
+    query += ' AND DATE(al.timestamp) <= ?';
+    params.push(end_date);
+  }
+  
+  query += ' ORDER BY al.timestamp DESC';
+  
+  const [rows] = await pool.execute(query, params);
+  return rows;
 };
 
 exports.getLogStats = async () => {

@@ -19,8 +19,6 @@ export const useAdmin = () => {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching admin data...');
-      
       const [usersResponse, logsResponse, loginLogsResponse, logStatsResponse, settingsResponse] = await Promise.all([
         apiRequest('/admin/users', { headers: getAuthHeaders() }),
         apiRequest('/admin/logs', { headers: getAuthHeaders() }),
@@ -50,7 +48,6 @@ export const useAdmin = () => {
     }
   };
 
-  // User management functions
   const addUser = async (userData) => {
     try {
       const response = await apiRequest('/admin/users', {
@@ -60,7 +57,6 @@ export const useAdmin = () => {
       });
       
       if (response.success) {
-        // Refresh the users list
         await fetchData();
       }
       
@@ -79,7 +75,6 @@ export const useAdmin = () => {
       });
       
       if (response.success) {
-        // Refresh the users list
         await fetchData();
       }
       
@@ -97,7 +92,6 @@ export const useAdmin = () => {
       });
       
       if (response.success) {
-        // Refresh the users list
         await fetchData();
       }
       
@@ -115,7 +109,6 @@ export const useAdmin = () => {
       });
       
       if (response.success) {
-        // Refresh the users list
         await fetchData();
       }
       
@@ -125,7 +118,6 @@ export const useAdmin = () => {
     }
   };
 
-  // Log management functions
   const getLogsByUser = async (userId) => {
     try {
       const response = await apiRequest(`/admin/logs/user/${userId}`, {
@@ -170,7 +162,6 @@ export const useAdmin = () => {
       });
       
       if (response.success) {
-        // Refresh the logs
         await fetchData();
       }
       
@@ -180,7 +171,6 @@ export const useAdmin = () => {
     }
   };
 
-  // Settings management functions
   const updateSettings = async (newSettings) => {
     try {
       const response = await apiRequest('/admin/settings', {
@@ -190,7 +180,6 @@ export const useAdmin = () => {
       });
       
       if (response.success) {
-        // Refresh the settings
         const settingsResponse = await apiRequest('/admin/settings', {
           headers: getAuthHeaders(),
         });
@@ -229,20 +218,17 @@ export const useAdmin = () => {
         headers: getAuthHeaders(),
       });
       
-      if (format === 'csv') {
-        // Create and download the file
-        const blob = new Blob([response], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `activity-logs-${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
+      const blob = new Blob([response.data], { type: response.type });
+      const url2 = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url2;
+      a.download = `admin-logs-${format}-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url2);
+      document.body.removeChild(a);
       
-      return { success: true, message: `Logs exported as ${format.toUpperCase()}` };
+      return { success: true, message: 'Logs exported successfully' };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -256,6 +242,7 @@ export const useAdmin = () => {
     settings,
     loading,
     error,
+    fetchData,
     addUser,
     updateUser,
     deleteUser,
@@ -265,7 +252,7 @@ export const useAdmin = () => {
     getLogsByDateRange,
     clearOldLogs,
     updateSettings,
-    exportLogs,
-    refreshData: fetchData
+    getPermissionsByRole,
+    exportLogs
   };
 };

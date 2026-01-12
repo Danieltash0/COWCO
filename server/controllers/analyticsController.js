@@ -59,7 +59,6 @@ exports.getAnalyticsSummary = async (req, res) => {
     const { range = 'month' } = req.query;
     const summary = await FinancialRecord.getAnalyticsSummary(range);
     
-    // Add milking data to the summary
     const milkingData = await getMilkingAnalytics(range);
     
     res.json({
@@ -71,7 +70,6 @@ exports.getAnalyticsSummary = async (req, res) => {
   }
 };
 
-// Helper function to get milking analytics
 async function getMilkingAnalytics(range = 'month') {
   try {
     let days;
@@ -92,7 +90,6 @@ async function getMilkingAnalytics(range = 'month') {
         days = 30;
     }
 
-    // Get overall milking statistics
     const [milkingStats] = await db.execute(`
       SELECT 
         COALESCE(SUM(amount), 0) as totalMilk,
@@ -104,7 +101,6 @@ async function getMilkingAnalytics(range = 'month') {
       WHERE milking_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
     `, [days]);
 
-    // Get top producing cattle
     const [topCattle] = await db.execute(`
       SELECT 
         c.name,
@@ -121,7 +117,6 @@ async function getMilkingAnalytics(range = 'month') {
       LIMIT 5
     `, [days]);
 
-    // Get session type breakdown
     const [sessionStats] = await db.execute(`
       SELECT 
         session_type,
@@ -134,7 +129,6 @@ async function getMilkingAnalytics(range = 'month') {
       ORDER BY session_type
     `, [days]);
 
-    // Get daily production trend (last 7 days)
     const [dailyTrend] = await db.execute(`
       SELECT 
         DATE(milking_date) as date,
@@ -181,7 +175,6 @@ exports.exportFinancialReport = async (req, res) => {
     const { range = 'month' } = req.query;
     const records = await FinancialRecord.getAllFinancialRecords();
     
-    // Create CSV content
     const csvHeaders = 'Date,Type,Category,Description,Amount,Payment Method,Reference,Status,Created By\n';
     const csvRows = records.map(record => {
       return `${record.date},${record.type},${record.category},"${record.description}",${record.amount},${record.payment_method || ''},${record.reference_number || ''},${record.status},${record.created_by_name || ''}`;
@@ -200,10 +193,6 @@ exports.exportFinancialReport = async (req, res) => {
 exports.getFinancialRecordsByDateRange = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'Start date and end date are required' });
-    }
-    
     const records = await FinancialRecord.getFinancialRecordsByDateRange(startDate, endDate);
     res.json(records);
   } catch (err) {

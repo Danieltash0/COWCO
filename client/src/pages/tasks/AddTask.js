@@ -1,49 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTasks } from '../../api/useTasks';
 import { useAuth } from '../../context/AuthContext';
-import '../../styles/Tasks.module.css';
+import { useTasks } from '../../api/useTasks';
+import { useAdmin } from '../../api/useAdmin';
+import Modal from '../../components/Modal';
+import { useNavigate } from 'react-router-dom';
 
 const AddTask = () => {
-  const { addTask, fetchWorkers } = useTasks();
   const { user } = useAuth();
+  const { addTask } = useTasks();
+  const { users } = useAdmin();
   const navigate = useNavigate();
+  
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
-    assignedTo: '',
     priority: 'medium',
-    dueDate: '',
-    category: 'general'
+    category: 'general',
+    assigned_to: '',
+    due_date: ''
   });
-  const [workers, setWorkers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
-    const loadWorkers = async () => {
-      const workersList = await fetchWorkers();
-      setWorkers(workersList);
-    };
-    loadWorkers();
-  }, [fetchWorkers]);
-
-  // Check if user is a farm manager
-  if (user.role !== 'Farm Manager') {
-    return (
-      <div className="dashboard-container">
-        <div className="content-header">
-          <h1 className="content-title">Access Denied</h1>
-        </div>
-        <div className="content-container">
-          <p>Only farm managers can add new tasks.</p>
-          <button onClick={() => navigate('/tasks')} className="btn btn-secondary">
-            Back to Tasks
-          </button>
-        </div>
-      </div>
-    );
-  }
+    if (user.role !== 'Farm Manager' && user.role !== 'Admin') {
+      navigate('/tasks');
+    }
+  }, [user.role, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -51,129 +34,135 @@ const AddTask = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    setSubmitting(true);
+    
+    try {
+      const selectedWorker = users.find(u => u.name === form.assigned_to);
+      if (!selectedWorker) {
+        alert('Please select a valid worker');
+        setSubmitting(false);
+        return;
+      }
 
-    // Find the worker by name to get their user ID
-    const selectedWorker = workers.find(worker => worker.name === form.assignedTo);
-    if (!selectedWorker) {
-      setError('Please select a valid worker');
-      setLoading(false);
-      return;
-    }
+      const taskData = {
+        ...form,
+        assigned_to: selectedWorker.id,
+        assigned_by: user.user_id
+      };
 
-    const taskData = {
-      title: form.title,
-      description: form.description,
-      assigned_to: selectedWorker.id, // Send user ID, not name
-      assigned_by: user.user_id, // Send user ID, not name
-      priority: form.priority,
-      category: form.category,
-      status: 'pending',
-      due_date: form.dueDate
-    };
-
-    const result = await addTask(taskData);
-    setLoading(false);
-
-    if (result.success) {
-      navigate('/tasks');
-    } else {
-      setError(result.error || 'Failed to add task');
+      const result = await addTask(taskData);
+      
+      if (result.success) {
+        setShowModal(false);
+        setForm({
+          title: '',
+          description: '',
+          priority: 'medium',
+          category: 'general',
+          assigned_to: '',
+          due_date: ''
+        });
+        navigate('/tasks');
+      } else {
+        alert('Failed to create task: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error creating task: ' + error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  return (
-    <div className="task-form-container">
-      <div className="content-header">
-        <h1 className="content-title">Add New Task</h1>
-        <p className="content-subtitle">Create a new task for the cattle management system</p>
-      </div>
+  const workerUsers = users.filter(u => u.role === 'Worker' && u.status === 'active');
 
-      {error && <div className="error-message">{error}</div>}
+  if (user.role !== 'Farm Manager' && user.role !== 'Admin') {
+    return <div>Access denied. Only Farm Managers and Admins can add tasks.</div>;
+  }
+
+  return (
+    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+      <h1 style={{ marginBottom: '30px', color: '#333' }}>Add New Task</h1>
       
-      <form onSubmit={handleSubmit} className="task-form">
-        <div className="form-group">
-          <label htmlFor="title">Task Title *</label>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            Task Title *
+          </label>
           <input
-            id="title"
             type="text"
             name="title"
             value={form.title}
             onChange={handleChange}
-            placeholder="Enter task title"
             required
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '16px'
+            }}
           />
         </div>
-        
-        <div className="form-group">
-          <label htmlFor="description">Description *</label>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            Description *
+          </label>
           <textarea
-            id="description"
             name="description"
             value={form.description}
             onChange={handleChange}
-            rows="4"
-            placeholder="Provide detailed description of the task"
             required
+            rows="4"
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '16px',
+              resize: 'vertical'
+            }}
           />
         </div>
-        
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="assignedTo">Assign To *</label>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Priority
+            </label>
             <select
-              id="assignedTo"
-              name="assignedTo"
-              value={form.assignedTo}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select a worker</option>
-              {workers.map((worker) => (
-                <option key={worker.id} value={worker.name}>
-                  {worker.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="priority">Priority</label>
-            <select
-              id="priority"
               name="priority"
               value={form.priority}
               onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
           </div>
-        </div>
-        
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="dueDate">Due Date *</label>
-            <input
-              id="dueDate"
-              type="date"
-              name="dueDate"
-              value={form.dueDate}
-              onChange={handleChange}
-              min={new Date().toISOString().split('T')[0]}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="category">Category</label>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Category
+            </label>
             <select
-              id="category"
               name="category"
               value={form.category}
               onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
             >
               <option value="general">General</option>
               <option value="feeding">Feeding</option>
@@ -187,29 +176,81 @@ const AddTask = () => {
           </div>
         </div>
 
-        <div className="form-info">
-          <p><strong>Task Details:</strong></p>
-          <ul>
-            <li>This task will be assigned by: <strong>{user.name}</strong></li>
-            <li>Initial status will be set to: <strong>Pending</strong></li>
-            <li>You can update the status later from the tasks list</li>
-          </ul>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Assign To
+            </label>
+            <select
+              name="assigned_to"
+              value={form.assigned_to}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+            >
+              <option value="">Select Worker</option>
+              {workerUsers.map(worker => (
+                <option key={worker.id} value={worker.name}>
+                  {worker.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Due Date
+            </label>
+            <input
+              type="date"
+              name="due_date"
+              value={form.due_date}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+            />
+          </div>
         </div>
-        
-        <div className="form-actions">
-          <button 
-            type="button" 
-            onClick={() => navigate('/tasks')} 
-            className="btn btn-secondary"
+
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            onClick={() => navigate('/tasks')}
+            style={{
+              padding: '10px 20px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: '#f8f9fa',
+              cursor: 'pointer'
+            }}
           >
             Cancel
           </button>
-          <button 
-            type="submit" 
-            className="btn btn-primary" 
-            disabled={loading}
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '4px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              opacity: submitting ? 0.6 : 1
+            }}
           >
-            {loading ? 'Adding Task...' : 'Add Task'}
+            {submitting ? 'Creating...' : 'Create Task'}
           </button>
         </div>
       </form>

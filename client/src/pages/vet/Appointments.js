@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
-import Modal from '../../components/Modal';
-import { useAppointments } from '../../api/useAppointments';
-import { useCattle } from '../../api/useCattle';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import '../../styles/Analytics.module.css';
+import { useCattle } from '../../api/useCattle';
+import { useAdmin } from '../../api/useAdmin';
+import Modal from '../../components/Modal';
 
 const Appointments = () => {
-  const { appointments, loading, error, addAppointment } = useAppointments();
-  const { cattle } = useCattle();
   const { user } = useAuth();
+  const { cattle } = useCattle();
+  const { users } = useAdmin();
+  
+  const [appointments, setAppointments] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ cattle_id: '', appointment_date: '', appointment_time: '', reason: '', notes: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    cattle_id: '',
+    appointment_date: '',
+    reason: ''
+  });
+
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/vet/appointments', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
+      setAppointments(data);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,112 +43,222 @@ const Appointments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    const result = await addAppointment({
-      ...form,
-      vet_id: user?.user_id
-    });
-    setSubmitting(false);
-    if (result.success) {
-      setShowModal(false);
-      setForm({ cattle_id: '', appointment_date: '', appointment_time: '', reason: '', notes: '' });
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/vet/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          ...form,
+          vet_id: user.user_id
+        })
+      });
+      
+      if (response.ok) {
+        setShowModal(false);
+        setForm({
+          cattle_id: '',
+          appointment_date: '',
+          reason: ''
+        });
+        fetchAppointments();
+      } else {
+        alert('Failed to create appointment');
+      }
+    } catch (error) {
+      alert('Error creating appointment: ' + error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  // Helper to get tomorrow's date in YYYY-MM-DD format
-  const getTomorrow = () => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d.toISOString().split('T')[0];
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
   };
 
+  const femaleCattle = cattle.filter(c => c.gender === 'Female');
+
   return (
-    <div className="appointments-container">
-      <div className="page-header">
-        <h2>Scheduled Appointments</h2>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          Add Appointment
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h1 style={{ color: '#333', margin: 0 }}>Health Appointments</h1>
+        <button 
+          onClick={() => setShowModal(true)}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Schedule Appointment
         </button>
       </div>
-      {loading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div className="error">Error: {error}</div>
-      ) : (
-        <div className="appointments-list">
-          {appointments.length === 0 ? (
-            <div className="no-appointments">
-              <p>No appointments scheduled.</p>
-            </div>
-          ) : (
-            <div className="table-container">
-              <table className="records-table">
-                <thead>
-                  <tr>
-                    <th>Cattle</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Reason</th>
-                    <th>Veterinarian</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map(appointment => (
-                    <tr key={appointment.appointment_id}>
-                      <td>{appointment.cattle_name || appointment.cattle_id}</td>
-                      <td>{appointment.appointment_date ? appointment.appointment_date.split('T')[0] : ''}</td>
-                      <td>{appointment.appointment_time}</td>
-                      <td>{appointment.reason || '-'}</td>
-                      <td>{appointment.vet_name || '-'}</td>
-                      <td>{appointment.notes || '-'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+
+      <div style={{ display: 'grid', gap: '20px' }}>
+        {appointments.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            No appointments scheduled
+          </div>
+        ) : (
+          appointments.map(appointment => {
+            const cattleInfo = cattle.find(c => c.cattle_id === appointment.cattle_id);
+            const vetInfo = users.find(u => u.id === appointment.vet_id);
+            
+            return (
+              <div 
+                key={appointment.appointment_id}
+                style={{
+                  padding: '20px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  backgroundColor: '#f9f9f9'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>
+                      {cattleInfo?.name || 'Unknown Cattle'} ({cattleInfo?.tag_number})
+                    </h3>
+                    <p style={{ margin: '5px 0', color: '#666' }}>
+                      <strong>Date:</strong> {new Date(appointment.appointment_date).toLocaleDateString()}
+                    </p>
+                    <p style={{ margin: '5px 0', color: '#666' }}>
+                      <strong>Reason:</strong> {appointment.reason}
+                    </p>
+                    <p style={{ margin: '5px 0', color: '#666' }}>
+                      <strong>Veterinarian:</strong> {vetInfo?.name || 'Unknown'}
+                    </p>
+                    <p style={{ margin: '5px 0', color: '#666' }}>
+                      <strong>Status:</strong> 
+                      <span style={{ 
+                        color: appointment.status === 'completed' ? '#28a745' : 
+                               appointment.status === 'cancelled' ? '#dc3545' : '#ffc107',
+                        fontWeight: 'bold',
+                        marginLeft: '5px'
+                      }}>
+                        {appointment.status}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title="Add Appointment"
+        title="Schedule New Appointment"
         size="medium"
       >
-        <form onSubmit={handleSubmit} className="appointment-form">
-          <div className="form-group">
-            <label>Cattle</label>
-            <select name="cattle_id" value={form.cattle_id} onChange={handleChange} required>
-              <option value="">Select Cattle</option>
-              {cattle.map(cow => (
-                <option key={cow.cattle_id} value={cow.cattle_id}>
-                  {cow.name} (ID: {cow.cattle_id})
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Select Cattle *
+            </label>
+            <select
+              name="cattle_id"
+              value={form.cattle_id}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+            >
+              <option value="">Choose a cattle</option>
+              {femaleCattle.map(c => (
+                <option key={c.cattle_id} value={c.cattle_id}>
+                  {c.name} ({c.tag_number}) - {c.breed}
                 </option>
               ))}
             </select>
           </div>
-          <div className="form-group">
-            <label>Date</label>
-            <input type="date" name="appointment_date" value={form.appointment_date} onChange={handleChange} required min={getTomorrow()} />
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Appointment Date *
+            </label>
+            <input
+              type="date"
+              name="appointment_date"
+              value={form.appointment_date}
+              onChange={handleChange}
+              min={getTomorrowDate()}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+            />
           </div>
-          <div className="form-group">
-            <label>Time</label>
-            <input type="time" name="appointment_time" value={form.appointment_time} onChange={handleChange} required />
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              Reason for Appointment *
+            </label>
+            <textarea
+              name="reason"
+              value={form.reason}
+              onChange={handleChange}
+              required
+              rows="3"
+              placeholder="Describe the reason for this appointment..."
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px',
+                resize: 'vertical'
+              }}
+            />
           </div>
-          <div className="form-group">
-            <label>Reason</label>
-            <input type="text" name="reason" value={form.reason} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label>Notes</label>
-            <textarea name="notes" value={form.notes} onChange={handleChange} rows="2" />
-          </div>
-          <div className="form-actions">
-            <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">
+
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              style={{
+                padding: '10px 20px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                backgroundColor: '#f8f9fa',
+                cursor: 'pointer'
+              }}
+            >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? 'Adding...' : 'Add Appointment'}
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '4px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                opacity: submitting ? 0.6 : 1
+              }}
+            >
+              {submitting ? 'Scheduling...' : 'Schedule Appointment'}
             </button>
           </div>
         </form>

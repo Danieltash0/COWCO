@@ -92,9 +92,15 @@ async function setupDatabase() {
       `CREATE TABLE IF NOT EXISTS activity_logs (
         log_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
-        action TEXT,
+        action VARCHAR(100) NOT NULL,
+        description TEXT,
+        ip_address VARCHAR(45),
+        user_agent TEXT,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+        INDEX idx_activity_logs_user_id (user_id),
+        INDEX idx_activity_logs_action (action),
+        INDEX idx_activity_logs_timestamp (timestamp)
       )`,
       
       `CREATE TABLE IF NOT EXISTS financial_records (
@@ -186,6 +192,24 @@ async function setupDatabase() {
         ['expense', 'Veterinary Care', 800.00, 'Routine health checkup', '2024-01-12', 'credit_card', 1]
       );
       console.log('Test financial records inserted');
+    }
+
+    // Insert some test activity logs if none exists
+    const [activityLogs] = await connection.execute('SELECT COUNT(*) as count FROM activity_logs');
+    if (activityLogs[0].count === 0) {
+      await connection.execute(
+        'INSERT INTO activity_logs (user_id, action, description, ip_address) VALUES (?, ?, ?, ?)',
+        [1, 'login', 'Admin user logged in successfully', '127.0.0.1']
+      );
+      await connection.execute(
+        'INSERT INTO activity_logs (user_id, action, description, ip_address) VALUES (?, ?, ?, ?)',
+        [1, 'user_create', 'Created new user: Test Manager', '127.0.0.1']
+      );
+      await connection.execute(
+        'INSERT INTO activity_logs (user_id, action, description, ip_address) VALUES (?, ?, ?, ?)',
+        [1, 'cattle_create', 'Added new cattle: Bessie (CT001)', '127.0.0.1']
+      );
+      console.log('Test activity logs inserted');
     }
 
     console.log('Database setup completed successfully!');
